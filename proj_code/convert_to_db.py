@@ -10,30 +10,39 @@ import os
 import logging
 import sqlite3
 from sqlite3 import Error
+from os.path import basename, join, splitext
 
 from proj_code.misc_methods import set_up_logging
+from proj_code.proj_spec_conversion import table_name_creation
 
 logger = logging.getLogger()
 
 """ Governing funcion call"""
-def convert_to_db(db_file:str, csv_fol:str, logger_name=""):
+def convert_to_db(db_file:str, csv_fol:str, logger_name="", proj_spec=True):
 
     set_up_logging(logger_name)
     create_database_file(db_file)
     initialise_sqlite_db_connection(db_file)
-    convert_all_csv_to_table(db_file, csv_fol)
+    convert_all_csv_to_table(db_file, csv_fol, proj_spec)
 
 
 """ Converting all found csv files in given location to tables"""
-def convert_all_csv_to_table(db_file: str, csv_fol: str ):
+def convert_all_csv_to_table(db_file: str, csv_fol: str, proj_spec):
 
     csv_files = os.listdir(csv_fol)
 
     # calling the csv to table method for each csv file
     for csv_file in csv_files:
         # getting the name of the csv file for the table
-        csv_name = os.basename(csv_file)
-        csv_to_table(db_file, csv_file=csv_file, table_name=csv_name)
+        logger.debug(csv_file)
+
+        # creating the name of the table with project specific code
+        csv_name = splitext(basename(csv_file))[0]
+        if proj_spec:
+            csv_name = table_name_creation(csv_name)
+
+        csv_path = join(csv_fol, csv_file)
+        csv_to_table(db_file, csv_file=csv_path, table_name=csv_name)
 
 
 """Building the query dynamically to ensure the number of placeholders
@@ -49,20 +58,23 @@ def csv_to_table(db_file: str, csv_file: str, table_name: str):
         columns = next(reader)
         cur = connection.cursor()
 
+        logger.debug("{0}\n{1}".format(table_name, columns))
         # creating the table with correct name and columns
-        cur.execute("CREATE TABLE {0} ({1});".format(table_name, ", ".join(columns)))
+        cur.execute("CREATE TABLE {0} ({1});".format(table_name, ','.join(columns)))
 
         # Finding and inserting the values into the table
-        query = 'INSERT INTO ' + table_name + '({0})' + ' VALUES ({1})'
-        query = query.format(','.join(columns), ','.join('?' * len(columns)))
+        query = 'INSERT INTO {0} ({1}) VALUES ({2})'
+        query = query.format(table_name, ','.join(columns), ','.join('?' * len(columns)))
         cursor = connection.cursor()
 
         # Looping through each insert statement
         for data in reader:
+            print(query, data)
             cursor.execute(query, data)
         # cur.executemany("INSERT INTO t (col1, col2) VALUES (?, ?);", to_db)
         # TODO command above replacement for loop?
-        cursor.commit()
+        connection.commit()
+        connection.close()
 
 # https://stackoverflow.com/questions/2887878/importing-a-csv-file-into-a-sqlite3-database-table-using-python
 # def sqlite_specific_convert():

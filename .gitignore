@@ -1,8 +1,9 @@
 # Project Specific
 */*.xlsx
 */*.csv
-*/*.db
+*.db
 json_storage/*
+reset.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

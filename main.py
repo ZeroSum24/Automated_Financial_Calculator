@@ -36,8 +36,8 @@ if __name__ == "__main__":
                                 csv_sheet=csv_sheet, logger_name=logger_name)
 
     # Converting all those files into an sqlite database
-    # convert_to_db(db_file=db_file_location, csv_fol=csv_fol,
-                                    # logger_name=logger_name)
+    convert_to_db(db_file=db_file_location, csv_fol=csv_fol,
+                                    logger_name=logger_name)
 
     # Running the database in terminal or asking the user options to run
     # which queries on
