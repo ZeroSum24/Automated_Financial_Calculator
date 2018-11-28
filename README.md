@@ -14,3 +14,4 @@ NB: Can use sqllite to create a local database in python
 https://docs.python.org/2/library/sqlite3.html
 
 6. Update loggin in the main libary function calls so log cascading from main is option, and logging in general is optional
+    -- Done, needs integration testing

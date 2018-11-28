@@ -17,22 +17,27 @@ json_storage_fol = "./json_storage/"
 drive_keys = "g_drive_files_key.json"
 
 # Logger set-up
-logger = logging.getLogger()
+logger_name = "SQL_Data_Convert"
+logger = logging.getLogger(logger_name)
 
 
 if __name__ == "__main__":
 
     # Create all needed directories
-    create_directories([excel_fol, csv_fol, json_storage_fol])
+    create_directories(list_dir=[excel_fol, csv_fol, json_storage_fol],
+                            logger_name=logger_name)
 
     # Download google drive spreadsheets to spreadsheets folder
-    # download_all_spreadsheets(drive_keys, json_storage)
+    # download_all_spreadsheets(keys_location=drive_keys,
+                            # json_storage=json_storage, logger_name=logger_name)
 
     # Converting all spreadsheets to csv
-    convert_all_spreadsheets(excel_fol, csv_fol, csv_sheet)
+    convert_all_spreadsheets(excel_fol=excel_fol, csv_fol=csv_fol,
+                                csv_sheet=csv_sheet, logger_name=logger_name)
 
     # Converting all those files into an sqlite database
-    # convert_to_db(db_file=db_file_location, csv_fol=csv_fol)
+    # convert_to_db(db_file=db_file_location, csv_fol=csv_fol,
+                                    # logger_name=logger_name)
 
     # Running the database in terminal or asking the user options to run
     # which queries on

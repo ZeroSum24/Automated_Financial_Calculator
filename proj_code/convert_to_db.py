@@ -11,18 +11,21 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
+from proj_code.misc_methods import set_up_logging
+
 logger = logging.getLogger()
 
 """ Governing funcion call"""
-def convert_to_db(db_file:str, csv_fol:str ):
+def convert_to_db(db_file:str, csv_fol:str, logger_name=""):
 
+    set_up_logging(logger_name)
     create_database_file(db_file)
     initialise_sqlite_db_connection(db_file)
     convert_all_csv_to_table(db_file, csv_fol)
 
 
 """ Converting all found csv files in given location to tables"""
-def convert_all_csv_to_table(db_file: str, csv_fol:str ):
+def convert_all_csv_to_table(db_file: str, csv_fol: str ):
 
     csv_files = os.listdir(csv_fol)
 
@@ -92,5 +95,5 @@ def initialise_sqlite_db_connection(db_file: str):
 def create_database_file(db_file: str):
     """Creating the database file if none already exist"""
 
-    if !os.path.exists(db_file):
+    if not os.path.exists(db_file):
         file = open(db_file,"w+")

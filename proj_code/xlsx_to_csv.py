@@ -6,13 +6,18 @@ import logging
 import os
 import xlrd
 
+from proj_code.misc_methods import set_up_logging
+
 logger = logging.getLogger()
 
 
 # Searching through the spreadsheets directory and converting all to csv files
-def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str ):
+def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str, logger_name= ""):
 
-    spreadsheets = os.listdir(excel_fol) # dir is your directory path
+    set_up_logging(logger_name)
+
+    # listing all spreadsheets in directory
+    spreadsheets = os.listdir(excel_fol)
 
     for workbook in spreadsheets:
 
