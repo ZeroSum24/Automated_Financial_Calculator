@@ -1,18 +1,21 @@
 
-# Dependencies: csv, logger, os, xlrd
+# Dependencies: csv, logger, os, pandas, xlrd
 
 import csv
 import logging
 import os
+import pandas as pd
 import xlrd
 
 from proj_code.misc_methods import set_up_logging
+from proj_code.proj_spec_conversion import name_conversion
 
 logger = logging.getLogger()
 
 
 # Searching through the spreadsheets directory and converting all to csv files
-def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str, logger_name= ""):
+def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str,
+                                            logger_name= "", proj_spec=True):
 
     set_up_logging(logger_name)
 
@@ -26,14 +29,19 @@ def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str, logger
 
         # creating variables for created csv file, converting into a readable csv name
         wkbk_name = os.path.basename(workbook)
-        csv_path = os.path.join(csv_fol, name_conversion(wkbk_name))
+
+        # Path conversion allowing for project specific conversions
+        csv_path = os.path.join(csv_fol, wkbk_name)
+        if proj_spec:
+            csv_path = os.path.join(csv_fol, name_conversion(wkbk_name))
 
         # updating the file type to csv
         pre, ext = os.path.splitext(csv_path)
         csv_path = pre + ".csv"
 
-        # converting to the csv from the workbook
+        # converting to the csv from the workbook, removing null values
         csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
+        remove_csv_null_values(csv_path=csv_path)
 
         logger.info("Converted {0} and stored in {1}".format(wkbk_name, csv_path))
 
@@ -51,17 +59,18 @@ def csv_from_excel(workbook: str, sheet: str, csv_out: str):
 
     your_csv_file.close()
 
-# Converting the name of the files to a more readable format
-# Example: 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
-#          -> 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
-def name_conversion(workbook: str):
+"""Updates any null values in the csv"""
+def remove_csv_null_values(csv_path : str):
 
-    # replacing the spaces and the date values
-    wkbk_updated = workbook.replace(' ', '_')
-    wkbk_updated = wkbk_updated.replace('%2F', '-')
+    # reads the csv from file
+    current_csv = pd.read_csv(csv_path)
 
-    # renaming the file
-    logger.debug("Workbook name {0}".format(workbook))
-    logger.debug("Workbook name updated {0}".format(wkbk_updated))
+    # Drops all null rows in the original DataFrame with an empty space
+    modified_csv = current_csv.dropna(how='all')
+    # Replaces null values with NULL
+    modified_csv = modified_csv.fillna("NULL")
 
-    return wkbk_updated
+    logger.debug("Amount of null values post-mod: {0}"
+                            .format(modified_csv.isnull().sum()))
+    # Saves the modified dataset to a the original CSV location
+    modified_csv.to_csv(csv_path,index=False)
