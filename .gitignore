@@ -1,5 +1,5 @@
 # Project Specific
-*/*.xlsv
+*/*.xlsx
 */*.csv
 */*.db
 json_storage/*

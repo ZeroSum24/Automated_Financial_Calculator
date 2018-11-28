@@ -20,7 +20,7 @@ logger = logging.getLogger()
 if __name__ == "__main__":
 
     # Download google drive spreadsheets to spreadsheets folder
-    download_all_spreadsheets(drive_keys, json_storage)
+    # download_all_spreadsheets(drive_keys, json_storage)
 
     # Converting all spreadsheets to csv
     convert_all_spreadsheets(excel_fol, csv_fol, csv_sheet)
