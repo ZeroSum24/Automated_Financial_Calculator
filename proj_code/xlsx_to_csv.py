@@ -1,5 +1,5 @@
 
-# Dependencies: csv, logger, xlrd
+# Dependencies: csv, logger, os, xlrd
 
 import csv
 import logging
@@ -22,7 +22,7 @@ def csv_from_excel(workbook: str, sheet: str, csv_out: str):
 
     your_csv_file.close()
 
-# searching through the spreadsheets directory and converting all to csv files
+# Searching through the spreadsheets directory and converting all to csv files
 def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str ):
 
     spreadsheets = os.listdir(excel_fol) # dir is your directory path
