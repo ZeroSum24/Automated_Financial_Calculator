@@ -17,8 +17,6 @@ import logging
 from os.path import join
 
 logger = logging.getLogger()
-credentials_path = ""
-
 
 # Download all the spreadsheats with key values
 def download_all_spreadsheets(keys_location: str, json_storage: str):
@@ -33,7 +31,10 @@ def download_all_spreadsheets(keys_location: str, json_storage: str):
         download_spreadsheets(file_key)
 
 # From Google Drive API documentation used to perform a file download
-def download_spreadsheets(file_key):
+def download_spreadsheets(file_key: str, json_storage: str):
+
+    # Getting credentials
+    credentials_path = join(json_storage, 'credentials.json')
 
     # Drive initialisation
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -59,8 +60,6 @@ def drive_authorise(json_storage: str):
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-
-    global credentials_path
 
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
