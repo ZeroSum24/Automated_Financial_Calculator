@@ -19,3 +19,5 @@ https://docs.python.org/2/library/sqlite3.html
 9. Should add a config file to handle config set-up like db type including password and user values
 
 10. Added adaptability of database types and swapped to sqlalchemy to manage these
+
+11. Need to fix appendage of non-unique values to the database
