@@ -6,15 +6,13 @@ logger = logging.getLogger()
 
 # Converting the name of the files to a more readable format
 # Example: 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
-#          -> 6._Nov_Sun_Day_Trip_25-11-18.xlsx
+#          -> 6. Nov Sun Day Trip - 25_11_18.csv
 def name_conversion(workbook: str, logger_name=""):
 
-    set_up_logging(logger_name)
+    global logger
+    logger = set_up_logging(logger_name)
 
-    # replacing the spaced hypen, fullstop, spaces and the date values
-    # wkbk_updated = workbook.replace(' - ', ' ')
-    # wkbk_updated = wkbk_updated.replace('.', '', 1)
-    # wkbk_updated = wkbk_updated.replace(' ', '_')
+    # updating the date values
     wkbk_updated = workbook.replace('%2F', '_')
 
     # renaming the file
@@ -26,7 +24,8 @@ def name_conversion(workbook: str, logger_name=""):
 """Taking specic csv files and creating table names from them"""
 def table_name_creation(csv_name: str, logger_name=""):
 
-    set_up_logging(logger_name)
+    global logger
+    logger = set_up_logging(logger_name)
 
     # Creating a dictionary to store all values
     trip_info = {}

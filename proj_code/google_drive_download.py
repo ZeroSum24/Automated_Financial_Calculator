@@ -23,7 +23,8 @@ logger = logging.getLogger()
 # Download all the spreadsheats with key values
 def download_all_spreadsheets(keys_location: str, json_storage: str, logger_name= ""):
 
-    set_up_logging(logger_name)
+    global logger
+    logger = set_up_logging(logger_name)
 
     # will be called if the account is not already authorised
     drive_key_path = join(json_storage, keys_location)

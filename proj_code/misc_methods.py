@@ -1,5 +1,6 @@
 from os import mkdir
-from os.path import basename, splitext
+from os.path import basename, exists, splitext
+import inspect
 import logging
 
 logger = logging.getLogger()
@@ -7,15 +8,21 @@ logger = logging.getLogger()
 # Create all desired directories
 def create_directories(list_dir: list, logger_name=""):
 
-    set_up_logging(logger_name)
-    # iterating over all the needed directories
+    global logger
+    logger = set_up_logging(logger_name)
+
+    # iterating over all the needed directories, adding them if they don't exist
     for dirName in list_dir:
-        try:
-            # Create target Directory
-            mkdir(dirName)
-            logger.info("Directory " , dirName ,  " Created ")
-        except FileExistsError:
-            logger.info("Directory " , dirName ,  " already exists")
+
+        if not exists(dirName):
+            try:
+                # Create target Directory
+                mkdir(dirName)
+                logger.info("Directory created: {0} ".format(dirName))
+            except Exception:
+                logger.error("During directory creation exception occured")
+        else:
+            logger.info("Directory already exists: {0} ".format(dirName))
 
     logger.info("Directory creation complete")
 
@@ -25,7 +32,10 @@ def set_up_logging(logger_name: str):
     if logger_name != "":
 
         # create the updated file names for the logger
-        file_name = splitext(basename(__file__))[0]
+        frame = inspect.stack()[1]
+        module = inspect.getmodule(frame[0]) # gets file name of method caller
+        file_name = splitext(basename(module.__file__))[0]
+
         logger_full_name = "{0}.{1}".format(logger_name, file_name)
         # update global logger with correct name
         global logger
@@ -34,6 +44,8 @@ def set_up_logging(logger_name: str):
         logger.info("Logging was set up correctly")
     else:
         logger.info("Global Logging was not set up")
+
+    return logger
 
 # initialise main app logger
 def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,

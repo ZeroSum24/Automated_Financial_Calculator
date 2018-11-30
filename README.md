@@ -8,7 +8,8 @@ Project to convert spreadsheets into a usable database to run database queries o
 https://stackoverflow.com/questions/21257899/writing-a-csv-file-into-sql-server-database-using-python
 NB: have to replace the MYTABLE with the table name (which should be the trip name)
 
-5. Trip Table names might have to be standarised to allow import for sql queries
+5. Trip Table names might have to be standarised to allow import for sql queries - [DONE]
+    -- done with project specific editing in a seperate library for modularity
 
 NB: Can use sqllite to create a local database in python
 https://docs.python.org/2/library/sqlite3.html
