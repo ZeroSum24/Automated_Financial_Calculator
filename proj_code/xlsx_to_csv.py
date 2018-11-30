@@ -17,33 +17,48 @@ logger = logging.getLogger()
 def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str,
                                             logger_name= "", proj_spec=True):
 
-    set_up_logging(logger_name)
+    global logger
+    logger = set_up_logging(logger_name)
 
     # listing all spreadsheets in directory
     spreadsheets = os.listdir(excel_fol)
 
     for workbook in spreadsheets:
 
-        # getting the workbook path name for conversion
-        wkbk_path = os.path.join(excel_fol, workbook)
-
-        # creating variables for created csv file, converting into a readable csv name
-        wkbk_name = os.path.basename(workbook)
-
-        # Path conversion allowing for project specific conversions
-        csv_path = os.path.join(csv_fol, wkbk_name)
-        if proj_spec:
-            csv_path = os.path.join(csv_fol, name_conversion(wkbk_name))
-
-        # updating the file type to csv
-        pre, ext = os.path.splitext(csv_path)
-        csv_path = pre + ".csv"
+        # calculating the file paths for each log book
+        wkbk_path, csv_path = calculating_file_paths(excel_fol, workbook, csv_fol, proj_spec)
 
         # converting to the csv from the workbook, removing null values
         csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
         remove_csv_null_values(csv_path=csv_path)
 
-        logger.info("Converted {0} and stored in {1}".format(wkbk_name, csv_path))
+        logger.debug("{0} completed".format(workbook))
+
+    logger.info("All spreadsheets converted")
+
+
+"""Method to calculate the file paths when moving and updating
+  a file to a new folder, added for readability"""
+def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, proj_spec: bool, file_extension=".csv"):
+
+        # getting the workbook path name for conversion
+        file_path = os.path.join(folder_loc, file_name)
+
+        # creating variables for created new file location, converting into a readable name
+        file_name = os.path.basename(file_name)
+        # Path conversion allowing for project specific conversions
+        file_to_fol_path = os.path.join(desired_fol, file_name)
+        if proj_spec:
+            file_to_fol_path = os.path.join(desired_fol, name_conversion(file_name))
+
+        # updating the file type to to desired
+        pre, ext = os.path.splitext(file_to_fol_path)
+        file_to_fol_path = pre + file_extension
+
+        logger.info("File path {0} and new file path {1} calculated"
+                .format(file_path, file_to_fol_path))
+
+        return (file_path, file_to_fol_path)
 
 # The xlrd module is used to read the excel and then you can use the csv module
 # to create your own csv.
