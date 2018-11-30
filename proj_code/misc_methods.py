@@ -71,3 +71,9 @@ def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,
     logger.addHandler(hdlr)
 
     return logger
+
+def create_file(file: str):
+    """Creating a file if doesn't already exist"""
+
+    if not os.path.exists(file):
+        file = open(file,"w+")

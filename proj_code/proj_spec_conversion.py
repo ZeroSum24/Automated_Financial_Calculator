@@ -41,7 +41,8 @@ def table_name_creation(csv_name: str, logger_name=""):
 
     logger.debug("Trip info: {0}".format(trip_info))
 
-    return trip_info["Name"]
+    # returned as lowered to help with databaes such as postgres
+    return trip_info["Name"].lower()
 
 """Intention is to create database table with all the trip values"""
 def create_trip_table():

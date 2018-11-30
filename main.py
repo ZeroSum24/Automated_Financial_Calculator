@@ -2,6 +2,7 @@
 
 import logging
 from proj_code.convert_to_db import convert_to_db
+from proj_code.db_type import db_type
 from proj_code.google_drive_download import download_all_spreadsheets
 from proj_code.misc_methods import create_directories, init_logger
 from proj_code.xlsx_to_csv import convert_all_spreadsheets
@@ -10,7 +11,8 @@ from proj_code.xlsx_to_csv import convert_all_spreadsheets
 excel_fol = "./Spreadsheets/"
 csv_fol = "./CSV/"
 csv_sheet = "To_CSV"
-db_file_location = "./sqlitedb.db"
+db_file_location = "./trip_financials.db"
+db_type = db_type.POSTGRES_DB
 
 # drive keys and json storage
 json_storage_fol = "./json_storage/"
@@ -37,7 +39,7 @@ if __name__ == "__main__":
 
     # Converting all those files into an sqlite database
     convert_to_db(db_file=db_file_location, csv_fol=csv_fol,
-                                    logger_name=logger_name)
+                                    logger_name=logger_name, db_type=db_type)
 
     # Running the database in terminal or asking the user options to run
     # which queries on
