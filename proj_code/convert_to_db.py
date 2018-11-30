@@ -68,7 +68,7 @@ def csv_to_table(db_engine: str, csv_path: str, table_name: str):
     logger.debug("CSV File: {0}".format(csv_pd))
 
     # convert the csv to sql, appends values if table is already there
-    csv_pd.to_sql(name=table_name, con=connection, if_exists='append')
+    csv_pd.to_sql(name=table_name, con=connection, if_exists='replace')
 
 
 """Forming the appropriate engine string depending on the desired database type"""
