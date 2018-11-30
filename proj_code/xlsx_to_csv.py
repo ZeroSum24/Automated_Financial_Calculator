@@ -35,6 +35,7 @@ def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str,
             # converting to the csv from the workbook, removing null values
             csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
             remove_csv_null_values(csv_path=csv_path)
+            fix_csv_columns(csv_path=csv_path)
 
             logger.debug("Conversion to .csv completed {0}".format(file))
 
@@ -97,3 +98,18 @@ def remove_csv_null_values(csv_path : str):
                             .format(modified_csv.isnull().sum()))
     # Saves the modified dataset to a the original CSV location
     modified_csv.to_csv(csv_path,index=False)
+
+"Method to fix the csv columns to a more readable style"
+def fix_csv_columns(csv_path: str):
+
+    # reads the csv from file
+    dataframe = pd.read_csv(csv_path)
+
+    # performing updates to the column name style style
+    dataframe.columns = dataframe.columns.str.strip().str.lower()
+    dataframe.columns = dataframe.columns.str.replace(' ', '_')
+    dataframe.columns = dataframe.columns.str.replace('(', '')
+    dataframe.columns = dataframe.columns.str.replace(')', '')
+
+    # Saves the modified dataset to a the original CSV location
+    dataframe.to_csv(csv_path,index=False)
