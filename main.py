@@ -10,7 +10,7 @@ from proj_code.xlsx_to_csv import convert_all_spreadsheets
 excel_fol = "./Spreadsheets/"
 csv_fol = "./CSV/"
 csv_sheet = "To_CSV"
-db_file_location = "./sqlitedb.db"
+db_file_location = "./trip_financials.db"
 
 # drive keys and json storage
 json_storage_fol = "./json_storage/"

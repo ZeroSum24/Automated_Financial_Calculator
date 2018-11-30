@@ -16,3 +16,6 @@ https://docs.python.org/2/library/sqlite3.html
       -- only downloaded if changed - [TODO]
 7. Better/more consistent code commenting such as in the numpy format - [TODO]
 8. Write sql queries on the database - [TODO]
+9. Should add a config file to handle config set-up like db type including password and user values
+
+10. Added adaptability of database types and swapped to sqlalchemy to manage these
