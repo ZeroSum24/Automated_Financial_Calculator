@@ -23,7 +23,7 @@ def convert_to_db(db_file:str, csv_fol:str, logger_name="", proj_spec=True):
 
     global logger
     logger = set_up_logging(logger_name)
-    
+
     create_database_file(db_file)
     initialise_sqlite_db_connection(db_file)
     convert_all_csv_to_table(db_file, csv_fol, proj_spec)
@@ -32,20 +32,24 @@ def convert_to_db(db_file:str, csv_fol:str, logger_name="", proj_spec=True):
 """ Converting all found csv files in given location to tables"""
 def convert_all_csv_to_table(db_file: str, csv_fol: str, proj_spec):
 
-    csv_files = os.listdir(csv_fol)
+    fol_files = os.listdir(csv_fol)
 
     # calling the csv to table method for each csv file
-    for csv_file in csv_files:
+    for file in fol_files:
         # getting the name of the csv file for the table
-        logger.debug(csv_file)
+        logger.debug(file)
 
+        # checking the file is .csv before converting
+        if splitext(file)[1] == ".csv":
         # creating the name of the table with project specific code
-        csv_name = splitext(basename(csv_file))[0]
-        if proj_spec:
-            csv_name = table_name_creation(csv_name)
+            csv_name = splitext(basename(file))[0]
+            if proj_spec:
+                csv_name = table_name_creation(csv_name)
 
-        csv_path = join(csv_fol, csv_file)
-        csv_to_table(db_file, csv_path=csv_path, table_name=csv_name)
+            csv_path = join(csv_fol, file)
+            csv_to_table(db_file, csv_path=csv_path, table_name=csv_name)
+        else:
+            logger.debug("File skipped as not .csv {0}".format(file))
 
 
 """Converting the csv to sql and updating the database with the values."""

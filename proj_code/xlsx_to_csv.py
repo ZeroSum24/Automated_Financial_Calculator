@@ -6,6 +6,7 @@ import logging
 import os
 import pandas as pd
 import xlrd
+from os.path import splitext
 
 from proj_code.misc_methods import set_up_logging
 from proj_code.proj_spec_conversion import name_conversion
@@ -21,18 +22,25 @@ def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str,
     logger = set_up_logging(logger_name)
 
     # listing all spreadsheets in directory
-    spreadsheets = os.listdir(excel_fol)
+    spreadsheets_fol = os.listdir(excel_fol)
 
-    for workbook in spreadsheets:
+    for file in spreadsheets_fol:
 
-        # calculating the file paths for each log book
-        wkbk_path, csv_path = calculating_file_paths(excel_fol, workbook, csv_fol, proj_spec)
+        # checking the file is .xlsx before converting
+        if splitext(file)[1] == ".xlsx":
 
-        # converting to the csv from the workbook, removing null values
-        csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
-        remove_csv_null_values(csv_path=csv_path)
+            # calculating the file paths for each log book
+            wkbk_path, csv_path = calculating_file_paths(excel_fol, file, csv_fol, proj_spec)
 
-        logger.debug("{0} completed".format(workbook))
+            # converting to the csv from the workbook, removing null values
+            csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
+            remove_csv_null_values(csv_path=csv_path)
+
+            logger.debug("Conversion to .csv completed {0}".format(file))
+
+        else:
+            logger.debug("File skipped as not .xlsx {0}".format(file))
+
 
     logger.info("All spreadsheets converted")
 
