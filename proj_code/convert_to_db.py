@@ -7,6 +7,7 @@
 
 import csv
 import os
+import pandas as pd
 import logging
 import sqlite3
 from sqlite3 import Error
@@ -20,7 +21,9 @@ logger = logging.getLogger()
 """ Governing funcion call"""
 def convert_to_db(db_file:str, csv_fol:str, logger_name="", proj_spec=True):
 
-    set_up_logging(logger_name)
+    global logger
+    logger = set_up_logging(logger_name)
+    
     create_database_file(db_file)
     initialise_sqlite_db_connection(db_file)
     convert_all_csv_to_table(db_file, csv_fol, proj_spec)
@@ -42,54 +45,26 @@ def convert_all_csv_to_table(db_file: str, csv_fol: str, proj_spec):
             csv_name = table_name_creation(csv_name)
 
         csv_path = join(csv_fol, csv_file)
-        csv_to_table(db_file, csv_file=csv_path, table_name=csv_name)
+        csv_to_table(db_file, csv_path=csv_path, table_name=csv_name)
 
 
-"""Building the query dynamically to ensure the number of placeholders
-    matches your table and CSV file format."""
-def csv_to_table(db_file: str, csv_file: str, table_name: str):
+"""Converting the csv to sql and updating the database with the values."""
+def csv_to_table(db_file: str, csv_path: str, table_name: str):
+    # Connecting to the database and using the pandas method to handle conversion
+    # https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html
 
+    logger.debug("Table name: {0}".format(table_name))
+
+    # Connecting to the database
     connection = sqlite3.connect(db_file)
 
-    # Reading the csv_file and creating the table
-    with open (csv_file, 'r') as f:
-        # reading the columns from file
-        reader = csv.reader(f)
-        columns = next(reader)
-        cur = connection.cursor()
+    # reads the csv from file
+    csv_pd = pd.read_csv(csv_path)
+    logger.debug("CSV File: {0}".format(csv_pd))
 
-        logger.debug("{0}\n{1}".format(table_name, columns))
-        # creating the table with correct name and columns
-        cur.execute("CREATE TABLE {0} ({1});".format(table_name, ','.join(columns)))
+    # convert the csv to sql, appends values if table is already there
+    csv_pd.to_sql(name=table_name, con=connection, if_exists='append')
 
-        # Finding and inserting the values into the table
-        query = 'INSERT INTO {0} ({1}) VALUES ({2})'
-        query = query.format(table_name, ','.join(columns), ','.join('?' * len(columns)))
-        cursor = connection.cursor()
-
-        # Looping through each insert statement
-        for data in reader:
-            print(query, data)
-            cursor.execute(query, data)
-        # cur.executemany("INSERT INTO t (col1, col2) VALUES (?, ?);", to_db)
-        # TODO command above replacement for loop?
-        connection.commit()
-        connection.close()
-
-# https://stackoverflow.com/questions/2887878/importing-a-csv-file-into-a-sqlite3-database-table-using-python
-# def sqlite_specific_convert():
-#
-#     con = sqlite3.connect(":memory:")
-#     cur = con.cursor()
-#     cur.execute("CREATE TABLE t (col1, col2);") # use your column names here
-#
-#     with open('data.csv','rb') as fin: # `with` statement available in 2.5+
-#         # csv.DictReader uses first line in file for column headings by default
-#         dr = csv.DictReader(fin) # comma is default delimiter
-#         to_db = [(i['col1'], i['col2']) for i in dr]
-#
-#     con.commit()
-#     con.close()
 
 def initialise_sqlite_db_connection(db_file: str):
     # Tutorial for initialising database
