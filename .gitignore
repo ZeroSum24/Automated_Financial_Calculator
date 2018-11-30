@@ -4,6 +4,7 @@
 *.db
 json_storage/*
 *.sh
+/Output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

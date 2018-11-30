@@ -1,0 +1,51 @@
+
+-- https://stackoverflow.com/questions/14931001/select-from-all-tables-mysql
+-- https://www.codeproject.com/Questions/385131/run-same-command-for-all-tables-in-a-databse-of-sq
+
+-- Select DISTINCT(name), email, owes
+-- from (SELECT table_name
+--       FROM information_schema.tables
+--       WHERE table_schema='public') tbl
+-- where paid IS NULL ;
+
+-- Create parent table and schema get all trips to inherit from this
+
+-- Get the table name from master where the values come from
+-- SELECT *, tableoid::regclass::text AS table_name
+-- FROM   master.tbl
+-- WHERE  <some_condition>;
+-- https://stackoverflow.com/questions/24580352/get-the-name-of-a-rows-source-table-when-querying-the-parent-it-inherits-from
+
+-- trip table with values of trips
+SELECT *, tableoid::regclass::text AS trip_name
+FROM trips_table ;
+
+-- debt list query
+select email, cast(sum(owes) as decimal(10,2) ) as Owes
+from trips_table
+where paid is null and owes <> 0
+group by email ;
+
+-- total debts
+select sum(dt_list.owes)
+from (select email, cast(sum(owes) as decimal(10,2) ) as Owes
+      from trips_table
+      where paid is null and owes <> 0
+      group by email) dt_list ;
+
+-- debt list query - with names
+with debt_list as
+    (select email, cast(sum(owes) as decimal(10,2) ) as owes
+     from trips_table
+     where paid is null
+     group by email )
+select names.name, debt_list.email, debt_list.owes
+from debt_list
+  left join (SELECT DISTINCT(email), Min(name) as name
+             from trips_table
+            group by email) names
+    on debt_list.email = names.email ;
+
+-- debt list query - with trip values
+-- caluculating string aggregates using sting_aggr following
+-- https://stackoverflow.com/questions/43870/how-to-concatenate-strings-of-a-string-field-in-a-postgresql-group-by-query

@@ -6,14 +6,19 @@ CREATE TABLE trips_table (index bigint, name text, email text, position text, ow
 
 -- altering the tables to have the same schema as the parent
 
-ALTER TABLE cairngorm SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE crianlarich SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE lakes_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE loch_lochy SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE nov_sat_day_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE nov_sun_day_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
-ALTER TABLE ratagan SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE cairngorm SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE crianlarich SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE lakes_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE loch_lochy SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE nov_sat_day_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE nov_sun_day_trip SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
+-- ALTER TABLE ratagan SET SCHEMA (index bigint, name text, email text, position text, owes double precision, paid text, payment_method text ) ;
 
+-- altering the column values that are null
+ALTER TABLE nov_sat_day_trip ALTER COLUMN paid TYPE text;
+ALTER TABLE nov_sat_day_trip ALTER COLUMN payment_method TYPE text;
+ALTER TABLE nov_sun_day_trip ALTER COLUMN paid TYPE text;
+ALTER TABLE nov_sun_day_trip ALTER COLUMN payment_method TYPE text;
 
 -- altering the tables to inherit the parent
 ALTER TABLE cairngorm INHERIT trips_table ;
