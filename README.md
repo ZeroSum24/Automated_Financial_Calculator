@@ -1,26 +1,18 @@
 # HW_Data_Management
 Project to convert spreadsheets into a usable database to run database queries on the values and cut down cross-referencing time.
 
-1. Convert the trip template forms into a bare template - [DONE]
-2. Download the trip templates as .csv files into a single folder - [ERRORS]
-3. Set-up a mysql server to use - [InProgress]
-4. Connect to the server and run the code in the first answer
-https://stackoverflow.com/questions/21257899/writing-a-csv-file-into-sql-server-database-using-python
-NB: have to replace the MYTABLE with the table name (which should be the trip name)
-
-5. Trip Table names might have to be standarised to allow import for sql queries - [DONE]
-    -- done with project specific editing in a seperate library for modularity
-
-NB: Can use sqllite to create a local database in python
+1. Downloading the spreadsheet files from google drive into a single folder - [InProgress]
+2. Convert the spreadsheets into a sql convertable format (.csv) - [DONE]
+    -- includes filtering out null values csv values - [DONE]
+3. Standardising file names for ease of queries - [DONE]
+4. Project specific code consolidated into a discrete module - [DONE]
+4. Set-up a mysql database (sqlite3) to use - [DONE]
 https://docs.python.org/2/library/sqlite3.html
+5. Implemented full application logging, which also for the reuse of modules - [DONE]
+    -- includes application level logging set up, in a standarised  format
 
-6. Update loggin in the main libary function calls so log cascading from main is option, and logging in general is optional - [DONE]
-    -- Needs integration testing
-    -- Logging needs high level main setup
-
-7. Consolidate project specific code such as name_conversion and specific table creation  - [DONE]
-
-8. Add update functionality, i.e. only download spreadsheets or update sql if spreadsheets have changed
-      -- only update the ones which have
-
-9. Remove blank/null values from the csv in conversion - [DONE]
+6. Add update functionality, i.e. only download spreadsheets or update sql if spreadsheets have changed
+      -- sql is only updated if changed - [DONE]
+      -- only downloaded if changed - [TODO]
+7. Better/more consistent code commenting such as in the numpy format - [TODO]
+8. Write sql queries on the database - [TODO]
