@@ -3,7 +3,7 @@
 import logging
 from proj_code.convert_to_db import convert_to_db
 from proj_code.google_drive_download import download_all_spreadsheets
-from proj_code.misc_methods import create_directories
+from proj_code.misc_methods import create_directories, init_logger
 from proj_code.xlsx_to_csv import convert_all_spreadsheets
 
 # Path Directories
@@ -18,11 +18,11 @@ drive_keys = "g_drive_files_key.json"
 
 # Logger set-up
 logger_name = "SQL_Data_Convert"
-logger = logging.getLogger(logger_name)
-
+logger = init_logger(logger_name, log_path="./test.log")
 
 if __name__ == "__main__":
 
+    logger.info("Running main")
     # Create all needed directories
     create_directories(list_dir=[excel_fol, csv_fol, json_storage_fol],
                             logger_name=logger_name)
