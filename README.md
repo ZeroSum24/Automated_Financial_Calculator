@@ -21,3 +21,7 @@ https://docs.python.org/2/library/sqlite3.html
 10. Added adaptability of database types and swapped to sqlalchemy to manage these
 
 11. Need to fix appendage of non-unique values to the database
+
+12. Need to make changes to allow the expenses/trip_credit be processed and run queries on this
+  -- make an automatted way of taking the trip lists and giving them same schema
+  -- and adding them to a parent table for queries to be run on

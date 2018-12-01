@@ -23,3 +23,12 @@ from debt_list, trips
 where debt_list.email = trips.email AND (trips.paid IS NULL and trips.owes <> 0)
 group by debt_list.name, debt_list.email, debt_list.owes ;
 ) TO STDOUT (format csv, delimiter ',') ;
+
+
+SELECT email, CAST(SUM(owes) as DECIMAL(10,2)), string_agg(tableoid::regclass::text, ', ') AS trip_name
+FROM trips_table
+WHERE paid IS NULL AND owes <> 0
+GROUP BY email
+ORDER BY trip_name ;
+
+select *, tableoid::regclass::text AS trip_name from trips_table where name='Tegan McKay' or name='Tegan Mckay' ;
