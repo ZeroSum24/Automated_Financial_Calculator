@@ -21,17 +21,24 @@ from proj_code.proj_spec_conversion import table_name_creation
 logger = logging.getLogger()
 
 """ Governing funcion call"""
-def convert_to_db(db_file:str, csv_fol:str, logger_name="", db_type=db_type.POSTGRES_DB, proj_spec=True):
+def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGRES_DB, db_file=""):
 
     global logger
     logger = set_up_logging(logger_name)
 
-    db_engine = form_db_engine(db_file, db_type)
-    convert_all_csv_to_table(db_engine, csv_fol, proj_spec)
+    db_engine_url = form_db_engine(db_file, db_type)
+
+    # for each path_tuple convert the csv to the database
+    for path_tuple in path_directories:
+
+        csv_fol = path_tuple[1]
+        spreadsheets_tag = path_directories.get(path_tuple)
+
+        convert_all_csv_to_table(db_engine_url, csv_fol, spreadsheets_tag)
 
 
 """ Converting all found csv files in given location to tables"""
-def convert_all_csv_to_table(db_engine: str, csv_fol: str, proj_spec: bool):
+def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension=".csv"):
 
     fol_files = os.listdir(csv_fol)
 
@@ -41,27 +48,26 @@ def convert_all_csv_to_table(db_engine: str, csv_fol: str, proj_spec: bool):
         logger.debug(file)
 
         # checking the file is .csv before converting
-        if splitext(file)[1] == ".csv":
+        if splitext(file)[1] == file_extension:
         # creating the name of the table with project specific code
-            csv_name = splitext(basename(file))[0]
-            if proj_spec:
-                csv_name = table_name_creation(csv_name)
+            base_csv_name = splitext(basename(file))[0]
+            csv_name = table_name_creation(spreadsheets_tag, base_csv_name)
 
             csv_path = join(csv_fol, file)
-            csv_to_table(db_engine, csv_path=csv_path, table_name=csv_name)
+            csv_to_table(db_engine_url, csv_path=csv_path, table_name=csv_name)
         else:
             logger.debug("File skipped as not .csv {0}".format(file))
 
 
 """Converting the csv to sql and updating the database with the values."""
-def csv_to_table(db_engine: str, csv_path: str, table_name: str):
+def csv_to_table(db_engine_url: str, csv_path: str, table_name: str):
     # Connecting to the database and using the pandas method to handle conversion
     # https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html
 
     logger.debug("Table name: {0}".format(table_name))
 
     # Connecting to the database
-    connection = init_db_connection(db_engine)
+    connection = init_db_connection(db_engine_url)
 
     # reads the csv from file
     csv_pd = pd.read_csv(csv_path)
@@ -92,14 +98,14 @@ def form_db_engine(db_file:str, db_type: db_type):
 
 
 """Initialises the database connection using an sqlalchemy engine"""
-def init_db_connection(db_engine: str):
+def init_db_connection(db_engine_url: str):
 
     connection = None
     # Attempting database connection and catching any errors
     try:
-        engine = db.create_engine(db_engine)
+        engine = db.create_engine(db_engine_url)
         connection = engine.connect()
-        logger.info("Database connected, engine {0}".format(db_engine))
+        logger.info("Database connected, engine {0}".format(db_engine_url))
     except Exception as e:
         logger.error(e)
         exit("Fatal Error: {0}".format(e)) # fatal error and exit

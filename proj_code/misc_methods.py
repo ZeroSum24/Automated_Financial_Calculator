@@ -6,25 +6,36 @@ import logging
 logger = logging.getLogger()
 
 # Create all desired directories
-def create_directories(list_dir: list, logger_name=""):
+def create_directories(path_directories: dict, logger_name=""):
 
+    # setting up logging
     global logger
     logger = set_up_logging(logger_name)
 
-    # iterating over all the needed directories, adding them if they don't exist
-    for dirName in list_dir:
+    # iterating over all the needed directories, extracting the values from path tuples
+    for path_tuple in path_directories:
 
-        if not exists(dirName):
-            try:
-                # Create target Directory
-                mkdir(dirName)
-                logger.info("Directory created: {0} ".format(dirName))
-            except Exception:
-                logger.error("During directory creation exception occured")
-        else:
-            logger.info("Directory already exists: {0} ".format(dirName))
+        # initialising source folder
+        create_directory(path_tuple[0])
+        # initialising output folder
+        create_directory(path_tuple[1])
 
     logger.info("Directory creation complete")
+
+
+def create_directory(directory_path : str):
+
+    # adding the directory if it doesn't exist
+    if not exists(directory_path):
+        try:
+            # Create target Directory
+            mkdir(directory_path)
+            logger.info("Directory created: {0} ".format(directory_path))
+        except Exception:
+            logger.error("During directory creation exception occured")
+    else:
+        logger.info("Directory already exists: {0} ".format(directory_path))
+
 
 # Sets up consistent logging across library
 def set_up_logging(logger_name: str):

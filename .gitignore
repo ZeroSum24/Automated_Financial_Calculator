@@ -1,6 +1,7 @@
 # Project Specific
-*/*.xlsx
-*/*.csv
+Spreadsheets/*
+CSV/*
+Output/*
 *.db
 json_storage/*
 *.sh
