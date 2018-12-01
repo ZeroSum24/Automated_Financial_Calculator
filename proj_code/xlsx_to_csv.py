@@ -19,12 +19,12 @@ def convert_all_spreadsheets(path_directories: dict, logger_name= ""):
     global logger
     logger = set_up_logging(logger_name)
 
-    for tuple_idx, path_tuple in enumerate(path_directories):
+    for spreadsheet_type in path_directories:
 
-        source_fol = path_tuple[0]
-        output_fol = path_tuple[1]
-        conversion_sheet = path_tuple[2]
-        spreadsheets_tag = path_directories.get(path_tuple)
+        source_fol = spreadsheet_type[0]
+        output_fol = spreadsheet_type[1]
+        conversion_sheet = spreadsheet_type[2]
+        spreadsheets_tag = path_directories.get(spreadsheet_type)
 
         convert_all_spreadsheets_in_folder(source_fol, output_fol, conversion_sheet, spreadsheets_tag)
 

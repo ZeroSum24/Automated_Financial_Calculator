@@ -88,3 +88,35 @@ def create_file(file: str):
 
     if not os.path.exists(file):
         file = open(file,"w+")
+
+"""Converting a dictionary to a string"""
+def dict_to_string(dict: dict):
+
+    item_strings = []
+    # Iterates over the dictionary items
+    for key, val in dict.items():
+        dict[key] = str(val)
+        item_str = "{0} {1}".format(key, val)
+        item_strings.append(item_str)
+    overall_str = ", ".join(item_strings)
+
+    logger.debug(overall_str)
+    return overall_str
+
+# Commparing if two dictionaries are equal
+def dict_equals(d1, d2):
+
+    dict_equal = False
+
+    # converting the dictionary keys to a set
+    d1_keys = set(d1.keys())
+    d2_keys = set(d2.keys())
+
+    # building a set of keys for which all the values match
+    intersect_keys = d1_keys.intersection(d2_keys)
+    same_values = set(o for o in intersect_keys if d1[o] == d2[o])
+
+    if len(same_values) == len(d1_keys) and len(same_values) == len(d2_keys):
+        dict_equal = True
+
+    return dict_equal

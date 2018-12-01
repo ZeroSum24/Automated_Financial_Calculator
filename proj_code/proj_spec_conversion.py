@@ -15,23 +15,27 @@ def path_directories():
     format = "{0}{1}"
 
     # Initalising the specific sheet names for the conversions
-    trips_sheet = "To_CSV"
-    finances_sheet = "Form Responses 1"
+    trips_sheet_tab = "To_CSV"
+    finances_sheet_tab = "Form Responses 1"
 
     # Setting up the trips
     trip_fol = format.format(excel_fol, trips_ext)
     trip_csv_fol = format.format(csv_fol, trips_ext)
+    trip_create_parent_table = True
+    trips_tuple = (trip_fol, trip_csv_fol, trips_sheet_tab, trip_create_parent_table)
 
     # Setting up the finances
     finances_fol = format.format(excel_fol, finances_ext)
     finances_csv_fol = format.format(csv_fol, finances_ext)
+    finances_create_parent_table = False
+    finances_tuple = (finances_fol, finances_csv_fol, finances_sheet_tab, finances_create_parent_table)
 
     # Creating a dictionary of the tuples of the desired paths with tags
-    path_dict = {(trip_fol, trip_csv_fol, trips_sheet): "trips" , (finances_fol, finances_csv_fol, finances_sheet): "finances"}
+    path_dict = {trips_tuple: "trips" , finances_tuple : "finances"}
 
     return path_dict
 
-def csv_name_creation(workbook_tag: str, workbook: str, logger_name=""):
+def csv_name_creation(workbook_tag: str, workbook_name: str, logger_name=""):
 
     # Set up logging
     global logger
@@ -40,12 +44,12 @@ def csv_name_creation(workbook_tag: str, workbook: str, logger_name=""):
     # If the workbook corresponds with a tag then run the appropriate csv name
     # conversion on that workbook
     if workbook_tag == "trips":
-        workbook = create_trips_csv_name(workbook)
+        workbook_name = create_trips_csv_name(workbook_name)
     elif workbook_tag == "finances":
-        workbook = create_finances_csv_name(workbook)
+        workbook_name = create_finances_csv_name(workbook_name)
 
     # return the updated or default workbook
-    return workbook
+    return workbook_name
 
 # Getting a readable csv file name from the finances spreadsheets
 # Example: 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
@@ -65,7 +69,7 @@ def create_trips_csv_name(workbook_name: str):
 # Getting a readable csv file name from the finances spreadsheets
 # Example: EUHWC - Expense Claims (Responses)
 #          EUHWC_-_Expense_Claims_(Responses)
-def create_finances_csv_name(workbook_name:str):
+def create_finances_csv_name(workbook_name: str):
 
     workbook_name = workbook_name.replace(" ", "_")
     return workbook_name
@@ -80,9 +84,9 @@ def table_name_creation(spreadsheets_tag: str, csv_name: str, logger_name=""):
     # If the workbook corresponds with a tag then run the appropriate table name
     # conversion on that workbook
     if spreadsheets_tag == "trips":
-        workbook = create_trips_table_name(csv_name)
+        csv_name = create_trips_table_name(csv_name)
     elif spreadsheets_tag == "finances":
-        workbook = create_finances_table_name(csv_name)
+        csv_name = create_finances_table_name(csv_name)
 
     return csv_name
 

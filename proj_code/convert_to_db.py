@@ -15,13 +15,14 @@ import sqlalchemy as db
 from sqlalchemy_utils import database_exists, create_database
 
 from proj_code.db_type import db_type
+from proj_code.db_organisation import drop_parent_table_if_existing, create_parent_table
 from proj_code.misc_methods import set_up_logging
 from proj_code.proj_spec_conversion import table_name_creation
 
 logger = logging.getLogger()
 
-""" Governing funcion call"""
-def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGRES_DB, db_file=""):
+"""Converting all the csv files to the database and creating a parent table for them if desired"""
+def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGRES_DB, db_file="", file_extension=".csv"):
 
     global logger
     logger = set_up_logging(logger_name)
@@ -29,21 +30,30 @@ def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGR
     db_engine_url = form_db_engine(db_file, db_type)
 
     # for each path_tuple convert the csv to the database
-    for path_tuple in path_directories:
+    for spreadsheet_type in path_directories:
 
-        csv_fol = path_tuple[1]
-        spreadsheets_tag = path_directories.get(path_tuple)
+        csv_fol = spreadsheet_type[1]
+        spreadsheets_tag = path_directories.get(spreadsheet_type)
+        create_parent_table_for_type = spreadsheet_type[3]
 
-        convert_all_csv_to_table(db_engine_url, csv_fol, spreadsheets_tag)
+        convert_all_csv_to_table(db_engine_url, csv_fol, spreadsheets_tag, file_extension)
+        # if a parent table is required, create one for the tables
+        if create_parent_table_for_type:
+            db_connection = init_db_connection(db_engine_url)
+            drop_parent_table_if_existing(db_connection,  spreadsheets_tag, logger_name)
+            table_names = convert_all_csv_to_table(db_engine_url, csv_fol, spreadsheets_tag, file_extension)
+            create_parent_table(db_connection, spreadsheets_tag, table_names, logger_name)
+            db_connection.close()
 
+    logger.info("Database conversion completed")
 
 """ Converting all found csv files in given location to tables"""
-def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension=".csv"):
+def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension):
 
-    fol_files = os.listdir(csv_fol)
+    table_names = []
 
     # calling the csv to table method for each csv file
-    for file in fol_files:
+    for file in os.listdir(csv_fol):
         # getting the name of the csv file for the table
         logger.debug(file)
 
@@ -51,13 +61,15 @@ def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag:
         if splitext(file)[1] == file_extension:
         # creating the name of the table with project specific code
             base_csv_name = splitext(basename(file))[0]
-            csv_name = table_name_creation(spreadsheets_tag, base_csv_name)
+            table_name = table_name_creation(spreadsheets_tag, base_csv_name)
+            table_names.append(table_name)
 
             csv_path = join(csv_fol, file)
-            csv_to_table(db_engine_url, csv_path=csv_path, table_name=csv_name)
+            csv_to_table(db_engine_url, csv_path=csv_path, table_name=table_name)
         else:
             logger.debug("File skipped as not .csv {0}".format(file))
 
+    return table_names
 
 """Converting the csv to sql and updating the database with the values."""
 def csv_to_table(db_engine_url: str, csv_path: str, table_name: str):
