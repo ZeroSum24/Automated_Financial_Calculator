@@ -47,8 +47,7 @@ def convert_all_spreadsheets_in_folder(source_fol: str, output_fol: str, convers
 
                 # converting to the csv from the workbook, removing null values
                 csv_from_excel(workbook=wkbk_path, sheet=conversion_sheet, csv_out=csv_path)
-                remove_csv_null_values(csv_path=csv_path)
-                fix_csv_columns(csv_path=csv_path)
+                update_csv(csv_path=csv_path)
 
                 logger.debug("Conversion to .csv completed {0}".format(file))
 
@@ -93,27 +92,34 @@ def csv_from_excel(workbook: str, sheet: str, csv_out: str):
 
     your_csv_file.close()
 
-"""Updates any null values in the csv"""
-def remove_csv_null_values(csv_path : str):
+"""Loads the current csv file into a dataframe and runs methods to update and filter values"""
+def update_csv(csv_path: str):
 
     # reads the csv from file
     current_csv = pd.read_csv(csv_path)
 
+    modified_df = remove_csv_null_values(dataframe=current_csv)
+    modified_df = fix_csv_columns(dataframe=modified_df)
+
+    # Saves the modified dataset to a the original CSV location
+    modified_df.to_csv(csv_path,index=False)
+
+
+"""Updates any null values in the dataframe"""
+def remove_csv_null_values(dataframe: pd.DataFrame):
+
     # Drops all null rows in the original DataFrame with an empty space
-    modified_csv = current_csv.dropna(how='all')
+    modified_df = dataframe.dropna(how='all')
     # Replaces null values with NULL
-    modified_csv = modified_csv.fillna("NULL")
+    modified_df = modified_df.fillna("NULL")
 
     logger.debug("Amount of null values post-mod: {0}"
-                            .format(modified_csv.isnull().sum()))
-    # Saves the modified dataset to a the original CSV location
-    modified_csv.to_csv(csv_path,index=False)
+                            .format(modified_df.isnull().sum()))
 
-"Method to fix the csv columns to a more readable style"
-def fix_csv_columns(csv_path: str):
+    return modified_df
 
-    # reads the csv from file
-    dataframe = pd.read_csv(csv_path)
+"Method to fix the dataframe columns to a more readable style"
+def fix_csv_columns(dataframe: pd.DataFrame):
 
     # performing updates to the column name style style
     dataframe.columns = dataframe.columns.str.strip().str.lower()
@@ -121,5 +127,4 @@ def fix_csv_columns(csv_path: str):
     dataframe.columns = dataframe.columns.str.replace('(', '')
     dataframe.columns = dataframe.columns.str.replace(')', '')
 
-    # Saves the modified dataset to a the original CSV location
-    dataframe.to_csv(csv_path,index=False)
+    return dataframe
