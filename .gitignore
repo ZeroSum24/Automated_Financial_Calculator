@@ -1,10 +1,12 @@
 # Project Specific
-*/*.xlsx
-*/*.csv
+Spreadsheets/*
+CSV/*
+Output/*
 *.db
 json_storage/*
 *.sh
 /Output/
+.idea
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

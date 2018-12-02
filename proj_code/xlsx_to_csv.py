@@ -9,46 +9,57 @@ import xlrd
 from os.path import splitext
 
 from proj_code.misc_methods import set_up_logging
-from proj_code.proj_spec_conversion import name_conversion
+from proj_code.proj_spec_conversion import csv_name_creation
 
 logger = logging.getLogger()
 
-
-# Searching through the spreadsheets directory and converting all to csv files
-def convert_all_spreadsheets(excel_fol: str, csv_fol: str, csv_sheet:str,
-                                            logger_name= "", proj_spec=True):
+# Converting all spreadsheets for each tuple in the path directory
+def convert_all_spreadsheets(path_directories: dict, logger_name= ""):
 
     global logger
     logger = set_up_logging(logger_name)
 
-    # listing all spreadsheets in directory
-    spreadsheets_fol = os.listdir(excel_fol)
+    for spreadsheet_type in path_directories:
 
-    for file in spreadsheets_fol:
+        source_fol = spreadsheet_type[0]
+        output_fol = spreadsheet_type[1]
+        conversion_sheet = spreadsheet_type[2]
+        spreadsheets_tag = path_directories.get(spreadsheet_type)
 
-        # checking the file is .xlsx before converting
-        if splitext(file)[1] == ".xlsx":
+        convert_all_spreadsheets_in_folder(source_fol, output_fol, conversion_sheet, spreadsheets_tag)
 
-            # calculating the file paths for each log book
-            wkbk_path, csv_path = calculating_file_paths(excel_fol, file, csv_fol, proj_spec)
-
-            # converting to the csv from the workbook, removing null values
-            csv_from_excel(workbook=wkbk_path, sheet=csv_sheet, csv_out=csv_path)
-            remove_csv_null_values(csv_path=csv_path)
-            fix_csv_columns(csv_path=csv_path)
-
-            logger.debug("Conversion to .csv completed {0}".format(file))
-
-        else:
-            logger.debug("File skipped as not .xlsx {0}".format(file))
+    logger.info("All spreadsheets converted across all folders")
 
 
-    logger.info("All spreadsheets converted")
+# Searching through the spreadsheets directory and converting all to csv files
+def convert_all_spreadsheets_in_folder(source_fol: str, output_fol: str, conversion_sheet: str, spreadsheets_tag: str):
+
+        # listing all spreadsheets in directory
+        spreadsheets_fol = os.listdir(source_fol)
+
+        for file in spreadsheets_fol:
+
+            # checking the file is .xlsx before converting
+            if splitext(file)[1] == ".xlsx":
+
+                # calculating the file paths for each log book
+                wkbk_path, csv_path = calculating_file_paths(source_fol, file, output_fol, spreadsheets_tag)
+
+                # converting to the csv from the workbook, removing null values
+                csv_from_excel(workbook=wkbk_path, sheet=conversion_sheet, csv_out=csv_path)
+                update_csv(csv_path=csv_path)
+
+                logger.debug("Conversion to .csv completed {0}".format(file))
+
+            else:
+                logger.debug("File skipped as not .xlsx {0}".format(file))
+
+        logger.info("All spreadsheets converted in folder: {0}".format(source_fol))
 
 
 """Method to calculate the file paths when moving and updating
   a file to a new folder, added for readability"""
-def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, proj_spec: bool, file_extension=".csv"):
+def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, spreadsheets_tag: str, file_extension=".csv"):
 
         # getting the workbook path name for conversion
         file_path = os.path.join(folder_loc, file_name)
@@ -56,9 +67,7 @@ def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, pr
         # creating variables for created new file location, converting into a readable name
         file_name = os.path.basename(file_name)
         # Path conversion allowing for project specific conversions
-        file_to_fol_path = os.path.join(desired_fol, file_name)
-        if proj_spec:
-            file_to_fol_path = os.path.join(desired_fol, name_conversion(file_name))
+        file_to_fol_path = os.path.join(desired_fol, csv_name_creation(spreadsheets_tag, file_name))
 
         # updating the file type to to desired
         pre, ext = os.path.splitext(file_to_fol_path)
@@ -83,27 +92,34 @@ def csv_from_excel(workbook: str, sheet: str, csv_out: str):
 
     your_csv_file.close()
 
-"""Updates any null values in the csv"""
-def remove_csv_null_values(csv_path : str):
+"""Loads the current csv file into a dataframe and runs methods to update and filter values"""
+def update_csv(csv_path: str):
 
     # reads the csv from file
     current_csv = pd.read_csv(csv_path)
 
+    modified_df = remove_csv_null_values(dataframe=current_csv)
+    modified_df = fix_csv_columns(dataframe=modified_df)
+
+    # Saves the modified dataset to a the original CSV location
+    modified_df.to_csv(csv_path,index=False)
+
+
+"""Updates any null values in the dataframe"""
+def remove_csv_null_values(dataframe: pd.DataFrame):
+
     # Drops all null rows in the original DataFrame with an empty space
-    modified_csv = current_csv.dropna(how='all')
+    modified_df = dataframe.dropna(how='all')
     # Replaces null values with NULL
-    modified_csv = modified_csv.fillna("NULL")
+    modified_df = modified_df.fillna("NULL")
 
     logger.debug("Amount of null values post-mod: {0}"
-                            .format(modified_csv.isnull().sum()))
-    # Saves the modified dataset to a the original CSV location
-    modified_csv.to_csv(csv_path,index=False)
+                            .format(modified_df.isnull().sum()))
 
-"Method to fix the csv columns to a more readable style"
-def fix_csv_columns(csv_path: str):
+    return modified_df
 
-    # reads the csv from file
-    dataframe = pd.read_csv(csv_path)
+"Method to fix the dataframe columns to a more readable style"
+def fix_csv_columns(dataframe: pd.DataFrame):
 
     # performing updates to the column name style style
     dataframe.columns = dataframe.columns.str.strip().str.lower()
@@ -111,5 +127,4 @@ def fix_csv_columns(csv_path: str):
     dataframe.columns = dataframe.columns.str.replace('(', '')
     dataframe.columns = dataframe.columns.str.replace(')', '')
 
-    # Saves the modified dataset to a the original CSV location
-    dataframe.to_csv(csv_path,index=False)
+    return dataframe
