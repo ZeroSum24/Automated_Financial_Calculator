@@ -24,3 +24,6 @@ https://docs.python.org/2/library/sqlite3.html
       -- update proj_spec_methods path directories to add a new type of spreadsheet to be added
 13. Added ability for a parent method to be automatically built from all sheets in a specific folder to allow queries to be run on all
     i.e. of the same "type" - [DONE] N.B only works if all sheets have the same columns and types
+14. Application now runs queries in the sql_queries folder automatically - [DONE]
+15. Wrote all the queries needed for the application - [DONE]
+16. Need to output the out set of queries to csv and make this automatic as part of the appliation
