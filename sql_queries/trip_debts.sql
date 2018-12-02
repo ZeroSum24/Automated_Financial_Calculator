@@ -1,6 +1,7 @@
 -- Outputting a list of everyone who owes money: displaying their name,
 -- debt amount and trips debt was accured on
 
+COPY (
 with trips as
   (SELECT *, tableoid::regclass::text AS trip_name
    FROM trips_table
@@ -17,7 +18,8 @@ with trips as
                  from trips_table
                  group by email) names
         on debt_list.email = names.email )
-SELECT debt_list.email
+SELECT debt_list.name, debt_list.email, debt_list.owes, string_agg(trips.trip_name, ', ') as trips
 from debt_list, trips
 where debt_list.email = trips.email AND (trips.paid IS NULL and trips.owes <> 0)
-group by debt_list.name, debt_list.email, debt_list.owes ;
+group by debt_list.name, debt_list.email, debt_list.owes
+) TO STDOUT (format csv, delimiter ',') ;
