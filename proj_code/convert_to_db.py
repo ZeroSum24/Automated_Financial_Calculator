@@ -46,6 +46,8 @@ def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGR
             db_connection.close()
 
     logger.info("Database conversion completed")
+    
+    return db_engine_url
 
 """ Converting all found csv files in given location to tables"""
 def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension):

@@ -6,12 +6,14 @@ from proj_code.db_type import db_type
 from proj_code.google_drive_download import download_all_spreadsheets
 from proj_code.misc_methods import create_directories, init_logger
 from proj_code.proj_spec_conversion import path_directories
+from proj_code.run_sql import run_all_sql
 from proj_code.xlsx_to_csv import convert_all_spreadsheets
 
 # Path Directories
 path_dir = path_directories()
 
 db_file_location = "./trip_financials.db"
+sql_folder = "./sql_queries/"
 db_type = db_type.POSTGRES_DB
 
 # drive keys and json storage
@@ -36,10 +38,11 @@ if __name__ == "__main__":
     convert_all_spreadsheets(path_directories=path_dir, logger_name=logger_name)
 
     # Converting all those files into an sqlite database
-    convert_to_db(path_directories=path_dir, logger_name=logger_name,
+    db_engine_url = convert_to_db(path_directories=path_dir, logger_name=logger_name,
                                      db_file=db_file_location, db_type=db_type)
 
-    # Running the database in terminal or asking the user options to run
-    # which queries on
+    # Automatically running all needed database queries
+    run_all_sql(main_sql_folder=sql_folder, db_engine_url=db_engine_url,
+                        logger_name=logger_name)
 
     print("*Completed*")
