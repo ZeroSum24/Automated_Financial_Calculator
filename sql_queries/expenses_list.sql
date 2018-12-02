@@ -3,7 +3,7 @@ with expenses_list as
     (with expenses_list as
       (SELECT email_address as email, CAST(SUM(total_amount_claimed_£) as decimal(10,2)) AS owed
        FROM expenses
-       -- WHERE paid IS null
+       WHERE paid IS null
        GROUP BY email)
     select names.name, expenses_list.email, expenses_list.owed
     from expenses_list
@@ -11,9 +11,8 @@ with expenses_list as
                  from expenses
                  group by email) names
         on expenses_list.email = names.email)
-SELECT expenses_list.name, expenses_list.email, expenses_list.owed, string_agg(CAST(expenses.index as varchar), ', ') as expense_num
+SELECT expenses_list.name, expenses_list.email, expenses_list.owed as owed, string_agg(CAST(expenses.index as varchar), ', ') as expense_num
 from expenses_list, expenses
--- where expenses_list.email = expenses.email AND expenses.paid IS NULL
-where expenses_list.email = expenses.email_address
+where expenses_list.email = expenses.email_address AND expenses.paid IS NULL
 group by expenses_list.name, expenses_list.email, expenses_list.owed
 ) TO STDOUT (format csv, delimiter ',') ;
