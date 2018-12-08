@@ -1,6 +1,6 @@
 -- debt_list balance debug
 CREATE TABLE balance_sheet as
-SELECT members_list.name, members_list.email,
+SELECT members_list.name, LOWER(members_list.email) as email,
 
       CAST((CASE WHEN owes is not null and owed is not null and credit is not null
               THEN owes-owed-credit

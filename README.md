@@ -27,3 +27,9 @@ https://docs.python.org/2/library/sqlite3.html
 14. Application now runs queries in the sql_queries folder automatically - [DONE]
 15. Wrote all the queries needed for the application - [DONE]
 16. Need to output the out set of queries to csv and make this automatic as part of the appliation
+17. update create folders method with the ability to create the sql folder, the output folder and the json storage folder
+
+
+18. make csv output command based on folder name last three letters being 'out'
+19. add program part that converts csv to back to xlsx for readability in conversion
+https://stackoverflow.com/questions/17684610/python-convert-csv-to-xlsx

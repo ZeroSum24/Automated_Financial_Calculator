@@ -1,5 +1,6 @@
 -- Outputting a list of everyone who owes money: displaying their name,
 -- debt amount and trips debt was accured on
+UPDATE trips_table SET name = TRIM(name), email = TRIM(LOWER(email)) ;
 
 CREATE TABLE trip_debts as
 with trips as
