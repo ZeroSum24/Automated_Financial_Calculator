@@ -2,6 +2,7 @@
 
 import logging
 from proj_code.convert_to_db import convert_to_db
+from proj_code.csv_to_xlsx import convert_all_csv_to_excel
 from proj_code.db_type import db_type
 from proj_code.google_drive_download import download_all_spreadsheets
 from proj_code.misc_methods import create_directories, init_logger
@@ -16,6 +17,10 @@ db_file_location = "./trip_financials.db"
 sql_folder = "./sql_queries/"
 db_type = db_type.POSTGRES_DB
 
+# Output folders
+extra_folders = ["./Output", "./Output/csv/", "./Output/xlsx"]
+output_name = "Treasury_Sheets"
+
 # drive keys and json storage
 json_storage_fol = "./json_storage/"
 drive_keys = "g_drive_files_key.json"
@@ -28,7 +33,8 @@ if __name__ == "__main__":
 
     logger.info("Running main")
     # Create all needed directories
-    create_directories(path_directories=path_dir, logger_name=logger_name)
+    create_directories(path_directories=path_dir, extra_folders=extra_folders,
+                                                    logger_name=logger_name)
 
     # Download google drive spreadsheets to spreadsheets folder
     # download_all_spreadsheets(keys_location=drive_keys,
@@ -44,5 +50,9 @@ if __name__ == "__main__":
     # Automatically running all needed database queries
     run_all_sql(main_sql_folder=sql_folder, db_engine_url=db_engine_url,
                         logger_name=logger_name)
+
+    # Converting all the created csv into a xlsx file
+    convert_all_csv_to_excel(source_folder=extra_folders[1], output_folder=extra_folders[2],
+                                workbook_name=output_name, logger_name=logger_name)
 
     print("*Completed*")

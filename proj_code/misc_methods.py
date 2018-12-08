@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger()
 
 # Create all desired directories
-def create_directories(path_directories: dict, logger_name=""):
+def create_directories(path_directories: dict, extra_folders = [], logger_name=""):
 
     # setting up logging
     global logger
@@ -20,9 +20,20 @@ def create_directories(path_directories: dict, logger_name=""):
         # initialising output folder
         create_directory(path_tuple[1])
 
+    logger.info("Path directory creation complete")
+
+    # if there are extra folders, loop through and create them
+    if extra_folders is not None:
+
+        for folder in extra_folders:
+            # initialising extra folder
+            create_directory(folder)
+        logger.info("Extra folder creation complete")
+
     logger.info("Directory creation complete")
 
 
+"""Creates directories using os commands"""
 def create_directory(directory_path : str):
 
     # adding the directory if it doesn't exist
