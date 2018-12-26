@@ -1,4 +1,4 @@
-from os import mkdir
+from os import mkdir, remove
 from os.path import basename, exists, splitext
 import inspect
 import logging
@@ -99,6 +99,31 @@ def create_file(file: str):
 
     if not os.path.exists(file):
         file = open(file,"w+")
+
+def save_text_to_file(filename: str, text: str):
+    """Creating a file and adding all the text to it"""
+
+    # splitting the text into lines and creating txt file
+    txt_lines = text.split("\n")
+    f = open(script_path, "w+")
+
+    # Writing each line to the file
+    for line in txt_lines:
+        f.write(line)
+
+    # closing the file
+    f.close()
+
+"""Python script to concatenate a list of files files into a single new file."""
+def merge_files(merged_file_path: str, list_of_files: list, remove_merged=True):
+
+    with open(merged_file_path, 'w') as outfile:
+        for fname in list_of_files:
+            with open(fname) as infile:
+                outfile.write("{0}\n".format(infile.read()))
+            # remove unneeded merged files
+            if remove_merged:
+                remove(fname)
 
 """Converting a dictionary to a string"""
 def dict_to_string(dict: dict):

@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     # Automatically running all needed database queries
     run_all_sql(main_sql_folder=sql_folder, db_engine_url=db_engine_url,
-                        logger_name=logger_name)
+                    output_folder=extra_folders[1], logger_name=logger_name)
 
     # Converting all the created csv into a xlsx file
     convert_all_csv_to_excel(source_folder=extra_folders[1], output_folder=extra_folders[2],
