@@ -12,6 +12,8 @@ SELECT members_list.name, LOWER(members_list.email) as email,
               THEN owes
              WHEN owes is null and owed is not null and credit is null
               THEN 0.0-owed
+             WHEN owes is null and owed is not null and credit is not null
+              THEN 0.0-owed
              ELSE 0.0
              END) as DECIMAL(10,2)) as balance,
        COALESCE(owes, 0.00) as owes, COALESCE(owed, 0.00) as owed,
