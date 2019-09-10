@@ -35,6 +35,7 @@ def convert_all_csv_to_excel(source_folder: str, output_folder: str, workbook_na
 
     logger.info("Convert all function call completed")
 
+
 def convert_all_csv_to_multiple_excel(source_folder: str, output_folder: str):
     """
     Converting all the csv to multiple excel files with the same name
@@ -123,10 +124,9 @@ def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, wo
     # updating the file type to to desired
     pre, ext = os.path.splitext(file_to_fol_path)
     file_to_fol_path = pre + file_extension
-    logger.info("File path {0} and new file path {1} calculated"
-            .format(file_path, file_to_fol_path))
+    logger.info("File path {0} and new file path {1} calculated".format(file_path, file_to_fol_path))
 
-    return (file_path, file_to_fol_path, sheet_name)
+    return file_path, file_to_fol_path, sheet_name
 
 
 def csv_to_excel_workbook(csv_file: str, workbook: Workbook, sheet_name: str):

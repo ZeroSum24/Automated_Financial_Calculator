@@ -4,9 +4,9 @@
 import csv
 import logging
 import os
+from os.path import splitext
 import pandas as pd
 import xlrd
-from os.path import splitext
 
 from src.utils.misc_methods import set_up_logging
 from src.utils.proj_spec_conversion import csv_name_creation
@@ -14,7 +14,7 @@ from src.utils.proj_spec_conversion import csv_name_creation
 logger = logging.getLogger()
 
 
-def convert_all_spreadsheets(path_directories: dict, logger_name= ""):
+def convert_all_spreadsheets(path_directories: dict, logger_name: str = ""):
     """
     Converting all spreadsheets for each tuple in the path directory
 
@@ -72,7 +72,8 @@ def convert_all_spreadsheets_in_folder(source_fol: str, output_fol: str, convers
     logger.info("All spreadsheets converted in folder: {0}".format(source_fol))
 
 
-def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, spreadsheets_tag: str, file_extension=".csv"):
+def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, spreadsheets_tag: str,
+                           file_extension=".csv"):
     """
     Method to calculate the file paths when moving and updating a file to a new folder, added for readability
 
@@ -96,10 +97,9 @@ def calculating_file_paths(folder_loc: str, file_name: str, desired_fol: str, sp
     pre, ext = os.path.splitext(file_to_fol_path)
     file_to_fol_path = pre + file_extension
 
-    logger.info("File path {0} and new file path {1} calculated"
-            .format(file_path, file_to_fol_path))
+    logger.info("File path {0} and new file path {1} calculated".format(file_path, file_to_fol_path))
 
-    return (file_path, file_to_fol_path)
+    return file_path, file_to_fol_path
 
 
 def csv_from_excel(workbook: str, sheet: str, csv_out: str):
@@ -138,7 +138,7 @@ def update_csv(csv_path: str):
     modified_df = fix_csv_columns(dataframe=modified_df)
 
     # Saves the modified dataset to a the original CSV location
-    modified_df.to_csv(csv_path,index=False)
+    modified_df.to_csv(csv_path, index=False)
 
 
 def remove_csv_null_values(dataframe: pd.DataFrame):
@@ -154,8 +154,7 @@ def remove_csv_null_values(dataframe: pd.DataFrame):
     # Replaces null values with NULL
     modified_df = modified_df.fillna("NULL")
 
-    logger.debug("Amount of null values post-mod: {0}"
-                            .format(modified_df.isnull().sum()))
+    logger.debug("Amount of null values post-mod: {0}".format(modified_df.isnull().sum()))
 
     return modified_df
 

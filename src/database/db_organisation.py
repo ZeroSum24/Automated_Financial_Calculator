@@ -31,7 +31,7 @@ def drop_parent_table_if_existing(db_conn: db.engine.base.Connection, spreadshee
         drop_table_cmd = "DROP TABLE {0} CASCADE;".format(parent_name)
         db_conn.execute(drop_table_cmd)
         logger.info(drop_table_cmd)
-        # commit and close the transation
+        # commit and close the transaction
         trans.commit()
         trans.close()
     else:
@@ -55,7 +55,6 @@ def create_parent_table(db_conn: db.engine.base.Connection, spreadsheets_tag: st
 
     # checks if the parent table exists in the database
     parent_name = "{0}_table".format(spreadsheets_tag)
-    parent_existing = db_conn.dialect.has_table(db_conn, parent_name)
 
     # use the spreadsheets_tag to make a parent name i.e. trips_table
     col_datatypes = get_parent_col_datatypes(db_conn, table_names, spreadsheets_tag)
@@ -131,16 +130,17 @@ def get_parent_col_datatypes(db_conn: db.engine.base.Connection, table_names: li
     if not check_all_col_datatypes_same(tables_columns, column_types):
         wrong_tables = ""
         for (table_name, cols_types) in tables_columns:
-            print(table_name)
-            if not column_types==dict_to_string(cols_types):
+
+            # TODO establish which tables are inconsistent with following check
+            if not column_types == dict_to_string(cols_types):
                 wrong_tables += " " + table_name
 
         error_message = " ".join(["Remote database is inconsistent with the",
-                         "application set-up. The {0} tables do not all have".format(spreadsheets_tag),
-                         "the same column datatypes:".format(wrong_tables),
-                         "."])
+                                  "application set-up. The {0} tables do not all have".format(spreadsheets_tag),
+                                  "the same column data types: ".format(wrong_tables), "."])
         logger.error(error_message)
-        exit("Fatal Error: {0}".format(error_message)) # fatal error and exit
+        # fatal error and exit
+        exit("Fatal Error: {0}".format(error_message))
 
     return column_types
 
@@ -156,7 +156,7 @@ def check_all_col_datatypes_same(tables_columns: list, column_types: str):
 
     logger.debug(tables_columns)
     # converting each dictionary to a string and checking they all match
-    all_datatypes_same = all(column_types==dict_to_string(cols_types) for (_, cols_types) in tables_columns)
+    all_datatypes_same = all(column_types == dict_to_string(cols_types) for (_, cols_types) in tables_columns)
 
     logger.debug("Check_all_cols_string: {0}".format(column_types))
     return all_datatypes_same

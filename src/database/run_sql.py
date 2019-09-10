@@ -89,9 +89,15 @@ def init_from_script(script_path: str, db_connection: db.engine.base.Connection)
     trans.commit()
     trans.close()
 
-"""If the table exists in the database it drops it from the database so it can
- be replaced with updated values"""
+
 def drop_table_if_existing(table_name: str, db_connection: db.engine.base.Connection):
+    """
+    If the table exists in the database it drops it from the database so it can be replaced with updated values
+
+    :param table_name:
+    :param db_connection:
+    :return:
+    """
 
     # checks if the table exists in the database
     table_existing = db_connection.dialect.has_table(db_connection, table_name)

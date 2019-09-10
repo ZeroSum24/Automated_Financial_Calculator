@@ -13,15 +13,29 @@ from sys import exit
 import sqlalchemy as db
 from sqlalchemy_utils import database_exists, create_database
 
-from src.utils.db_type import db_type
+from src.utils.databasetype import DatabaseType
 from src.database.db_organisation import drop_parent_table_if_existing, create_parent_table
 from src.utils.misc_methods import set_up_logging
 from src.utils.proj_spec_conversion import table_name_creation
 
 logger = logging.getLogger()
 
-"""Converting all the csv files to the database and creating a parent table for them if desired"""
-def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGRES_DB, db_file="", file_extension=".csv"):
+
+def convert_to_db(path_directories: dict,
+                  logger_name: str = "",
+                  db_type: DatabaseType = DatabaseType.POSTGRES_DB,
+                  db_file: str = "",
+                  file_extension: str = ".csv"):
+    """
+    Converting all the csv files to the database and creating a parent table for them if desired
+
+    :param path_directories:
+    :param logger_name:
+    :param db_type:
+    :param db_file:
+    :param file_extension:
+    :return:
+    """
 
     global logger
     logger = set_up_logging(logger_name)
@@ -48,8 +62,17 @@ def convert_to_db(path_directories: dict, logger_name="", db_type=db_type.POSTGR
     
     return db_engine_url
 
-""" Converting all found csv files in given location to tables"""
-def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension):
+
+def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag: str, file_extension: str):
+    """
+    Converting all found csv files in given location to tables
+
+    :param db_engine_url:
+    :param csv_fol:
+    :param spreadsheets_tag:
+    :param file_extension:
+    :return:
+    """
 
     table_names = []
 
@@ -60,7 +83,7 @@ def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag:
 
         # checking the file is .csv before converting
         if splitext(file)[1] == file_extension:
-        # creating the name of the table with project specific code
+            # creating the name of the table with project specific code
             base_csv_name = splitext(basename(file))[0]
             table_name = table_name_creation(spreadsheets_tag, base_csv_name)
             table_names.append(table_name)
@@ -72,10 +95,18 @@ def convert_all_csv_to_table(db_engine_url: str, csv_fol: str, spreadsheets_tag:
 
     return table_names
 
-"""Converting the csv to sql and updating the database with the values."""
+
 def csv_to_table(db_engine_url: str, csv_path: str, table_name: str):
+    """
+    Converting the csv to sql and updating the database with the values.
     # Connecting to the database and using the pandas method to handle conversion
     # https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html
+
+    :param db_engine_url:
+    :param csv_path:
+    :param table_name:
+    :return:
+    """
 
     logger.debug("Table name: {0}".format(table_name))
 
@@ -90,15 +121,21 @@ def csv_to_table(db_engine_url: str, csv_path: str, table_name: str):
     csv_pd.to_sql(name=table_name, con=connection, if_exists='replace')
 
 
-"""Forming the appropriate engine string depending on the desired database type"""
-def form_db_engine(db_file:str, db_type: db_type):
+def form_db_engine(db_file: str, db_type: DatabaseType):
+    """
+    Forming the appropriate engine string depending on the desired database type
+
+    :param db_file:
+    :param db_type:
+    :return:
+    """
 
     engine_url = None
 
     # Makes the appropriate function call depending on the given desired database value
     if db_type == db_type.SQLITE_DB:
         engine_url = 'sqlite:///{0}'.format(db_file)
-    elif db_type == db_type.POSTGRES_DB :
+    elif db_type == db_type.POSTGRES_DB:
         db_name = splitext(basename(db_file))[0]
         engine_url = 'postgresql://postgres:postgres@localhost/{0}'.format(db_name)
 
@@ -110,8 +147,12 @@ def form_db_engine(db_file:str, db_type: db_type):
     return engine_url
 
 
-"""Initialises the database connection using an sqlalchemy engine"""
 def init_db_connection(db_engine_url: str):
+    """
+    Initialises the database connection using an sqlalchemy engine
+    :param db_engine_url:
+    :return:
+    """
 
     connection = None
     # Attempting database connection and catching any errors
@@ -121,6 +162,7 @@ def init_db_connection(db_engine_url: str):
         logger.info("Database connected, engine {0}".format(db_engine_url))
     except Exception as e:
         logger.error(e)
-        exit("Fatal Error: {0}".format(e)) # fatal error and exit
+        # fatal error and exit
+        exit("Fatal Error: {0}".format(e))
 
     return connection

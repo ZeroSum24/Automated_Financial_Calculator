@@ -6,12 +6,12 @@ import logging
 logger = logging.getLogger()
 
 
-def create_directories(path_directories: dict, extra_folders = [], logger_name=""):
+def create_directories(path_directories: dict, output_folders: list = list, logger_name=""):
     """
     Create all desired directories
 
     :param path_directories:
-    :param extra_folders:
+    :param output_folders:
     :param logger_name:
     :return:
     """
@@ -31,9 +31,9 @@ def create_directories(path_directories: dict, extra_folders = [], logger_name="
     logger.info("Path directory creation complete")
 
     # if there are extra folders, loop through and create them
-    if extra_folders is not None:
+    if output_folders is not None:
 
-        for folder in extra_folders:
+        for folder in output_folders:
             # initialising extra folder
             create_directory(folder)
         logger.info("Extra folder creation complete")
@@ -41,14 +41,13 @@ def create_directories(path_directories: dict, extra_folders = [], logger_name="
     logger.info("Directory creation complete")
 
 
-def create_directory(directory_path : str):
+def create_directory(directory_path: str):
     """
     Creates directories using os commands
 
     :param directory_path:
     :return:
     """
-
 
     # adding the directory if it doesn't exist
     if not exists(directory_path):
@@ -74,7 +73,8 @@ def set_up_logging(logger_name: str):
 
         # create the updated file names for the logger
         frame = inspect.stack()[1]
-        module = inspect.getmodule(frame[0]) # gets file name of method caller
+        module = inspect.getmodule(frame[0])
+        # gets file name of method caller
         file_name = splitext(basename(module.__file__))[0]
 
         logger_full_name = "{0}.{1}".format(logger_name, file_name)
@@ -84,20 +84,21 @@ def set_up_logging(logger_name: str):
 
         logger.info("Logging was set up correctly")
     else:
+        logger = logging.getLogger("")
         logger.info("Global Logging was not set up")
 
     return logger
 
 
 def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"):
+                logging_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"):
     """
     Initialise main app logger
 
     :param logger_name:
     :param level:
     :param log_path:
-    :param format:
+    :param logging_format:
     :return:
     """
 
@@ -106,19 +107,20 @@ def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,
     logger.setLevel(level)
 
     # setting up the handler to stream or file
-    hdlr = logging.StreamHandler()
-    if log_path != None:
-        hdlr = logging.FileHandler(log_path)
+    handler = logging.StreamHandler()
+
+    if log_path is not None:
+        handler = logging.FileHandler(log_path)
 
     # Set the log level
-    hdlr.setLevel(level)
+    handler.setLevel(level)
 
     # add formatter to handler
-    formatter = logging.Formatter(format)
-    hdlr.setFormatter(formatter)
+    formatter = logging.Formatter(logging_format)
+    handler.setFormatter(formatter)
 
     # attaching the handler to the logger
-    logger.addHandler(hdlr)
+    logger.addHandler(handler)
 
     return logger
 
@@ -127,10 +129,9 @@ def create_file(file: str):
     """
     Creating a file if doesn't already exist
     :param file:
-    :return:
     """
-    if not os.path.exists(file):
-        file = open(file,"w+")
+    if not exists(file):
+        open(file, "w+")
 
 
 def save_text_to_file(filename: str, text: str):
@@ -144,7 +145,7 @@ def save_text_to_file(filename: str, text: str):
 
     # splitting the text into lines and creating txt file
     txt_lines = text.split("\n")
-    f = open(script_path, "w+")
+    f = open(filename, "w+")
 
     # Writing each line to the file
     for line in txt_lines:
@@ -165,25 +166,25 @@ def merge_files(merged_file_path: str, list_of_files: list, remove_merged=True):
     """
 
     with open(merged_file_path, 'w') as outfile:
-        for fname in list_of_files:
-            with open(fname) as infile:
+        for file_name in list_of_files:
+            with open(file_name) as infile:
                 outfile.write("{0}\n".format(infile.read()))
             # remove unneeded merged files
             if remove_merged:
-                remove(fname)
+                remove(file_name)
 
 
-def dict_to_string(dict: dict):
+def dict_to_string(dictionary: dict):
     """
     Converting a dictionary to a string
 
-    :param dict:
+    :param dictionary:
     :return:
     """
     item_strings = []
     # Iterates over the dictionary items
-    for key, val in dict.items():
-        dict[key] = str(val)
+    for key, val in dictionary.items():
+        dictionary[key] = str(val)
         item_str = "{0} {1}".format(key, val)
         item_strings.append(item_str)
     overall_str = ", ".join(item_strings)
@@ -192,7 +193,7 @@ def dict_to_string(dict: dict):
     return overall_str
 
 
-def dict_equals(d1, d2):
+def dict_equals(d1: dict, d2: dict) -> bool:
     """
     Commparing if two dictionaries are equal
 

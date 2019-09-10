@@ -1,11 +1,9 @@
 # Project Specific
-Spreadsheets/*
-CSV/*
-Output/*
+input/*
+output/*
 *.db
-json_storage/*
+config/google_drive
 *.sh
-/Output/
 .idea
 
 # Byte-compiled / optimized / DLL files

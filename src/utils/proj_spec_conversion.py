@@ -1,41 +1,24 @@
 
 import logging
+
 from src.utils.misc_methods import set_up_logging
 
 logger = logging.getLogger()
 
 
-def path_directories():
+def path_directories(path_dirs: dict):
     """
     Setting up the desired path directories for each type of file to be converted
     :return:
     """
-
-    # Setting up the correct extensions
-    excel_fol = "./Spreadsheets/"
-    csv_fol = "./CSV/"
-    trips_ext = "trips/"
-    finances_ext = "finances/"
-    format = "{0}{1}"
-
-    # Initalising the specific sheet names for the conversions
-    trips_sheet_tab = "To_CSV"
-    finances_sheet_tab = "Form Responses 1"
-
-    # Setting up the trips
-    trip_fol = format.format(excel_fol, trips_ext)
-    trip_csv_fol = format.format(csv_fol, trips_ext)
-    trip_create_parent_table = True
-    trips_tuple = (trip_fol, trip_csv_fol, trips_sheet_tab, trip_create_parent_table)
-
     # Setting up the finances
-    finances_fol = format.format(excel_fol, finances_ext)
-    finances_csv_fol = format.format(csv_fol, finances_ext)
-    finances_create_parent_table = False
-    finances_tuple = (finances_fol, finances_csv_fol, finances_sheet_tab, finances_create_parent_table)
+    trips_tuple = (path_dirs['trips_path'], path_dirs['trips_csv_folder'], path_dirs['trips_sheet_tab'],
+                   path_dirs['trips_create_parent_table']  == "True", path_dirs['trips_name'])
+    finances_tuple = (path_dirs['finances_path'], path_dirs['finances_csv_folder'], path_dirs['finances_sheet_tab'],
+                      path_dirs['finances_create_parent_table'] == "True", path_dirs['finances_name'])
 
     # Creating a dictionary of the tuples of the desired paths with tags
-    path_dict = {trips_tuple: "trips", finances_tuple: "finances"}
+    path_dict = {trips_tuple: path_dirs['trips_name'], finances_tuple: path_dirs['finances_name']}
 
     return path_dict
 
@@ -55,9 +38,9 @@ def csv_name_creation(workbook_tag: str, workbook_name: str, logger_name=""):
 
     # If the workbook corresponds with a tag then run the appropriate csv name
     # conversion on that workbook
-    if workbook_tag == "trips":
+    if workbook_tag == 'trips':
         workbook_name = create_trips_csv_name(workbook_name)
-    elif workbook_tag == "finances":
+    elif workbook_tag == 'finances':
         workbook_name = create_finances_csv_name(workbook_name)
 
     # return the updated or default workbook
@@ -110,11 +93,10 @@ def table_name_creation(spreadsheets_tag: str, csv_name: str, logger_name=""):
     global logger
     logger = set_up_logging(logger_name)
 
-    # If the workbook corresponds with a tag then run the appropriate table name
-    # conversion on that workbook
-    if spreadsheets_tag == "trips":
+    # If the workbook corresponds with a tag then run the appropriate table name conversion on that workbook
+    if spreadsheets_tag == 'trips':
         csv_name = create_trips_table_name(csv_name)
-    elif spreadsheets_tag == "finances":
+    elif spreadsheets_tag == 'finances':
         csv_name = create_finances_table_name(csv_name)
 
     return csv_name
