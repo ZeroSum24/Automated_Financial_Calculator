@@ -1,17 +1,20 @@
 import logging
-from os.path import basename, join, splitext
 import sqlalchemy as db
 from sys import exit
 
-from proj_code.misc_methods import dict_equals, dict_to_string, set_up_logging
-from proj_code.proj_spec_conversion import table_name_creation
+from src.utils.misc_methods import dict_to_string, set_up_logging
 
 logger = logging.getLogger()
 
 
-"""If the parent exists in the database it drops it from the database so it can
- be replaced with updated values"""
 def drop_parent_table_if_existing(db_conn: db.engine.base.Connection, spreadsheets_tag: str, logger_name=""):
+    """
+    If the parent exists in the database it drops it from the database so it can be replaced with updated values
+    :param db_conn:
+    :param spreadsheets_tag:
+    :param logger_name:
+    :return:
+    """
 
     # Set up logging
     global logger
@@ -25,7 +28,7 @@ def drop_parent_table_if_existing(db_conn: db.engine.base.Connection, spreadshee
     if parent_existing:
         trans = db_conn.begin()
         # execute the command
-        drop_table_cmd = 'DROP TABLE {0} CASCADE;'.format(parent_name)
+        drop_table_cmd = "DROP TABLE {0} CASCADE;".format(parent_name)
         db_conn.execute(drop_table_cmd)
         logger.info(drop_table_cmd)
         # commit and close the transation
@@ -35,8 +38,16 @@ def drop_parent_table_if_existing(db_conn: db.engine.base.Connection, spreadshee
         logger.info("Parent table {0} does not exist".format(parent_name))
 
 
-"""Creating a parent table in the database for all the tables of the same type"""
 def create_parent_table(db_conn: db.engine.base.Connection, spreadsheets_tag: str, table_names: list, logger_name=""):
+    """
+    Creating a parent table in the database for all the tables of the same type
+
+    :param db_conn:
+    :param spreadsheets_tag:
+    :param table_names:
+    :param logger_name:
+    :return:
+    """
 
     # Set up logging
     global logger
@@ -54,8 +65,15 @@ def create_parent_table(db_conn: db.engine.base.Connection, spreadsheets_tag: st
     add_tables_to_parent(db_conn, table_names, parent_name)
 
 
-"""Creates the parent table in the database"""
 def create_db_table(db_conn: db.engine.base.Connection, table_name: str, column_datatypes: str):
+    """
+    Creates the parent table in the database
+
+    :param db_conn:
+    :param table_name:
+    :param column_datatypes:
+    :return:
+    """
 
     # runs create table command in the database
     create_table_cmd = "CREATE TABLE {0} ( {1} );".format(table_name, column_datatypes)
@@ -68,8 +86,15 @@ def create_db_table(db_conn: db.engine.base.Connection, table_name: str, column_
     trans.close()
 
 
-"""Adding all the tables to the parent table"""
 def add_tables_to_parent(db_conn: db.engine.base.Connection, table_names: list, parent_name: str):
+    """
+    Adding all the tables to the parent table
+
+    :param db_conn:
+    :param table_names:
+    :param parent_name:
+    :return:
+    """
 
     for table_name in table_names:
 
@@ -86,40 +111,65 @@ def add_tables_to_parent(db_conn: db.engine.base.Connection, table_names: list, 
         trans.close()
 
 
-"""Create trips_table using the schema from one of the trips"""
 def get_parent_col_datatypes(db_conn: db.engine.base.Connection, table_names: list, spreadsheets_tag: str):
+    """
+    Create trips_table using the schema from one of the trips
+
+    :param db_conn:
+    :param table_names:
+    :param spreadsheets_tag:
+    :return:
+    """
 
     # getting the database metadata to check the table values
     db_metadata = db.MetaData(bind=db_conn, reflect=db_conn)
     tables_details = get_table_colmn_details(db_metadata, table_names)
-    tables_columns = list(tables_details.values())
-    column_types = dict_to_string(tables_columns[0])
+    tables_columns = list(zip(table_names, list(tables_details.values())))
+    column_types = dict_to_string(tables_columns[0][1])
 
     # If the tables don't have the same types log an error message and close the program
     if not check_all_col_datatypes_same(tables_columns, column_types):
+        wrong_tables = ""
+        for (table_name, cols_types) in tables_columns:
+            print(table_name)
+            if not column_types==dict_to_string(cols_types):
+                wrong_tables += " " + table_name
 
         error_message = " ".join(["Remote database is inconsistent with the",
                          "application set-up. The {0} tables do not all have".format(spreadsheets_tag),
-                         "the same column datatypes."])
+                         "the same column datatypes:".format(wrong_tables),
+                         "."])
         logger.error(error_message)
         exit("Fatal Error: {0}".format(error_message)) # fatal error and exit
 
     return column_types
 
 
-"""Checking the schene of all the table names is the same"""
 def check_all_col_datatypes_same(tables_columns: list, column_types: str):
+    """
+    Checking the schene of all the table names is the same
+
+    :param tables_columns:
+    :param column_types:
+    :return:
+    """
 
     logger.debug(tables_columns)
     # converting each dictionary to a string and checking they all match
-    all_datatypes_same = all(column_types==dict_to_string(cols_types) for cols_types in tables_columns)
+    all_datatypes_same = all(column_types==dict_to_string(cols_types) for (_, cols_types) in tables_columns)
 
     logger.debug("Check_all_cols_string: {0}".format(column_types))
     return all_datatypes_same
 
 
-"""Getting the column details (name and type) for each table with the same table type"""
 def get_table_colmn_details(db_metadata: db.MetaData, table_names: list):
+    """
+    Getting the column details (name and type) for each table with the same table type
+
+    :param db_metadata:
+    :param table_names:
+    :return:
+    """
 
     tables_details = {}
     table_names_set = set(table_names)

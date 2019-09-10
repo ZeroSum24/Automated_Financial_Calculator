@@ -5,8 +5,16 @@ import logging
 
 logger = logging.getLogger()
 
-# Create all desired directories
+
 def create_directories(path_directories: dict, extra_folders = [], logger_name=""):
+    """
+    Create all desired directories
+
+    :param path_directories:
+    :param extra_folders:
+    :param logger_name:
+    :return:
+    """
 
     # setting up logging
     global logger
@@ -33,8 +41,14 @@ def create_directories(path_directories: dict, extra_folders = [], logger_name="
     logger.info("Directory creation complete")
 
 
-"""Creates directories using os commands"""
 def create_directory(directory_path : str):
+    """
+    Creates directories using os commands
+
+    :param directory_path:
+    :return:
+    """
+
 
     # adding the directory if it doesn't exist
     if not exists(directory_path):
@@ -48,8 +62,13 @@ def create_directory(directory_path : str):
         logger.info("Directory already exists: {0} ".format(directory_path))
 
 
-# Sets up consistent logging across library
 def set_up_logging(logger_name: str):
+    """
+    Sets up consistent logging across library
+
+    :param logger_name:
+    :return:
+    """
 
     if logger_name != "":
 
@@ -69,9 +88,18 @@ def set_up_logging(logger_name: str):
 
     return logger
 
-# initialise main app logger
+
 def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"):
+    """
+    Initialise main app logger
+
+    :param logger_name:
+    :param level:
+    :param log_path:
+    :param format:
+    :return:
+    """
 
     # initialise the logging object and setting the logging level
     logger = logging.getLogger(logger_name)
@@ -94,14 +122,25 @@ def init_logger(logger_name: str, level=logging.DEBUG, log_path=None,
 
     return logger
 
-def create_file(file: str):
-    """Creating a file if doesn't already exist"""
 
+def create_file(file: str):
+    """
+    Creating a file if doesn't already exist
+    :param file:
+    :return:
+    """
     if not os.path.exists(file):
         file = open(file,"w+")
 
+
 def save_text_to_file(filename: str, text: str):
-    """Creating a file and adding all the text to it"""
+    """
+    Creating a file and adding all the text to it
+
+    :param filename:
+    :param text:
+    :return:
+    """
 
     # splitting the text into lines and creating txt file
     txt_lines = text.split("\n")
@@ -114,8 +153,16 @@ def save_text_to_file(filename: str, text: str):
     # closing the file
     f.close()
 
-"""Python script to concatenate a list of files files into a single new file."""
+
 def merge_files(merged_file_path: str, list_of_files: list, remove_merged=True):
+    """
+    Python script to concatenate a list of files files into a single new file.
+
+    :param merged_file_path:
+    :param list_of_files:
+    :param remove_merged:
+    :return:
+    """
 
     with open(merged_file_path, 'w') as outfile:
         for fname in list_of_files:
@@ -125,9 +172,14 @@ def merge_files(merged_file_path: str, list_of_files: list, remove_merged=True):
             if remove_merged:
                 remove(fname)
 
-"""Converting a dictionary to a string"""
-def dict_to_string(dict: dict):
 
+def dict_to_string(dict: dict):
+    """
+    Converting a dictionary to a string
+
+    :param dict:
+    :return:
+    """
     item_strings = []
     # Iterates over the dictionary items
     for key, val in dict.items():
@@ -139,8 +191,15 @@ def dict_to_string(dict: dict):
     logger.debug(overall_str)
     return overall_str
 
-# Commparing if two dictionaries are equal
+
 def dict_equals(d1, d2):
+    """
+    Commparing if two dictionaries are equal
+
+    :param d1:
+    :param d2:
+    :return:
+    """
 
     dict_equal = False
 

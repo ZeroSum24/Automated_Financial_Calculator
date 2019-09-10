@@ -2,17 +2,25 @@ import logging
 import os
 from os.path import abspath, basename, join, splitext
 from re import match
-from shutil import move
 import sqlalchemy as db
-from sqlalchemy_utils import database_exists, create_database
 
-from proj_code.convert_to_db import init_db_connection
-from proj_code.misc_methods import merge_files, set_up_logging
+from src.database.convert_to_db import init_db_connection
+from src.utils.misc_methods import merge_files, set_up_logging
 
 logger = logging.getLogger()
 
-"""Run all the sql scripts in the folder according to folder ordering if desired"""
+
 def run_all_sql(main_sql_folder: str, db_engine_url: str, num_ordered=True, output_folder=None, logger_name=""):
+    """
+    Run all the sql scripts in the folder according to folder ordering if desired
+
+    :param main_sql_folder:
+    :param db_engine_url:
+    :param num_ordered:
+    :param output_folder:
+    :param logger_name:
+    :return:
+    """
 
     global logger
     logger = set_up_logging(logger_name)
@@ -40,8 +48,15 @@ def run_all_sql(main_sql_folder: str, db_engine_url: str, num_ordered=True, outp
     connection.close()
     logger.info("All sql run on the database")
 
-"""Run all the sql commands in the current sql folder"""
+
 def run_all_sql_fol_cmds(sql_folder: str, db_connection: db.engine.base.Connection):
+    """
+    Run all the sql commands in the current sql folder
+
+    :param sql_folder:
+    :param db_connection:
+    :return:
+    """
 
     for script in os.listdir(sql_folder):
         script_path = join(sql_folder, script)
@@ -52,8 +67,15 @@ def run_all_sql_fol_cmds(sql_folder: str, db_connection: db.engine.base.Connecti
         drop_table_if_existing(table_name, db_connection)
         init_from_script(script_path, db_connection)
 
-"""Opening and reading the script before running the script on the database"""
+
 def init_from_script(script_path: str, db_connection: db.engine.base.Connection):
+    """
+    Opening and reading the script before running the script on the database
+
+    :param script_path:
+    :param db_connection:
+    :return:
+    """
 
     # read the script
     f = open(script_path)
@@ -87,8 +109,14 @@ def drop_table_if_existing(table_name: str, db_connection: db.engine.base.Connec
     else:
         logger.info("Table {0} does not exist as a table".format(table_name))
 
-"""Checking if the folder name has a number at the start"""
+
 def check_folder_names(folder_name:str):
+    """
+    Checking if the folder name has a number at the start
+
+    :param folder_name:
+    :return:
+    """
 
     is_folder_num_ordered = False
     name_split = basename(folder_name).split("_")
@@ -102,10 +130,17 @@ def check_folder_names(folder_name:str):
     return is_folder_num_ordered
 
 
-# TODO incorporate the file output regex so folders are only outputtted if they match
-# then match all folders to regex and run this function rather than init_from_script function
-"""Running all the commands in a given folder and outputting their results to csv"""
 def output_all_in_folder_to_csv(folder_name:str, output_folder:str, db_connection: db.engine.base.Connection):
+    """
+    # TODO incorporate the file output regex so folders are only outputtted if they match
+    # then match all folders to regex and run this function rather than init_from_script function
+
+    Running all the commands in a given folder and outputting their results to csv
+    :param folder_name:
+    :param output_folder:
+    :param db_connection:
+    :return:
+    """
 
     for file in os.listdir(folder_name):
 
@@ -114,8 +149,16 @@ def output_all_in_folder_to_csv(folder_name:str, output_folder:str, db_connectio
 
     logger.info("All files output to csv")
 
-"""Running all the sql statements in a given file and outputting their results to a matching csv file"""
+
 def output_sql_statements_to_csv(script_path: str, output_folder: str, db_connection: db.engine.base.Connection):
+    """
+    Running all the sql statements in a given file and outputting their results to a matching csv file
+
+    :param script_path:
+    :param output_folder:
+    :param db_connection:
+    :return:
+    """
 
     # read the script and split into queries
     f = open(script_path)
@@ -159,13 +202,21 @@ def output_sql_statements_to_csv(script_path: str, output_folder: str, db_connec
 
     # merging into one file, the output of any sql file with more than one statement
     if len(sql_queries) > 1:
-        files_list = list(map(lambda x: abspath(join(output_folder, "file{0}.csv".format(str(x)))), range(len(sql_queries))))
+        files_list = list(map(lambda x: abspath(join(output_folder, "file{0}.csv".format(str(x)))),
+                              range(len(sql_queries))))
         merge_files(fin_out_file, files_list)
 
     logger.debug("SQL File completed")
 
-"""Checks whether a given directory matches a string pattern"""
+
 def is_out_folder(path: str, str_pattern=".+_out$"):
+    """
+    Checks whether a given directory matches a string pattern
+
+    :param path:
+    :param str_pattern:
+    :return:
+    """
 
     fol_path = basename(path)
     is_out = bool(match(str_pattern, fol_path))

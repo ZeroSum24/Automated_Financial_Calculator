@@ -16,7 +16,7 @@ import json
 import logging
 from os.path import join
 
-from proj_code.misc_methods import set_up_logging
+from src.utils.misc_methods import set_up_logging
 
 logger = logging.getLogger()
 

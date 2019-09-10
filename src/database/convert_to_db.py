@@ -5,7 +5,6 @@
 # SQL Server database
 # https://stackoverflow.com/questions/21257899/writing-a-csv-file-into-sql-server-database-using-python
 
-import csv
 import os
 import pandas as pd
 import logging
@@ -14,10 +13,10 @@ from sys import exit
 import sqlalchemy as db
 from sqlalchemy_utils import database_exists, create_database
 
-from proj_code.db_type import db_type
-from proj_code.db_organisation import drop_parent_table_if_existing, create_parent_table
-from proj_code.misc_methods import set_up_logging
-from proj_code.proj_spec_conversion import table_name_creation
+from src.utils.db_type import db_type
+from src.database.db_organisation import drop_parent_table_if_existing, create_parent_table
+from src.utils.misc_methods import set_up_logging
+from src.utils.proj_spec_conversion import table_name_creation
 
 logger = logging.getLogger()
 

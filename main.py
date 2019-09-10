@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
-import logging
-from proj_code.convert_to_db import convert_to_db
-from proj_code.csv_to_xlsx import convert_all_csv_to_excel
-from proj_code.db_type import db_type
-from proj_code.google_drive_download import download_all_spreadsheets
-from proj_code.misc_methods import create_directories, init_logger
-from proj_code.proj_spec_conversion import path_directories
-from proj_code.run_sql import run_all_sql
-from proj_code.xlsx_to_csv import convert_all_spreadsheets
+from src.database.convert_to_db import convert_to_db
+from src.file_conversions.csv_to_xlsx import convert_all_csv_to_excel
+from src.utils.db_type import db_type
+from src.utils.misc_methods import create_directories, init_logger
+from src.utils.proj_spec_conversion import path_directories
+from src.database.run_sql import run_all_sql
+from src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
 
 # Path Directories
 path_dir = path_directories()

@@ -1,11 +1,15 @@
 
 import logging
-from proj_code.misc_methods import set_up_logging
+from src.utils.misc_methods import set_up_logging
 
 logger = logging.getLogger()
 
-"""Setting up the desired path directories for each type of file to be converted"""
+
 def path_directories():
+    """
+    Setting up the desired path directories for each type of file to be converted
+    :return:
+    """
 
     # Setting up the correct extensions
     excel_fol = "./Spreadsheets/"
@@ -31,11 +35,19 @@ def path_directories():
     finances_tuple = (finances_fol, finances_csv_fol, finances_sheet_tab, finances_create_parent_table)
 
     # Creating a dictionary of the tuples of the desired paths with tags
-    path_dict = {trips_tuple: "trips" , finances_tuple : "finances"}
+    path_dict = {trips_tuple: "trips", finances_tuple: "finances"}
 
     return path_dict
 
+
 def csv_name_creation(workbook_tag: str, workbook_name: str, logger_name=""):
+    """
+
+    :param workbook_tag:
+    :param workbook_name:
+    :param logger_name:
+    :return:
+    """
 
     # Set up logging
     global logger
@@ -51,10 +63,15 @@ def csv_name_creation(workbook_tag: str, workbook_name: str, logger_name=""):
     # return the updated or default workbook
     return workbook_name
 
-# Getting a readable csv file name from the finances spreadsheets
-# Example: 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
-#          -> 6._Nov_Sun_Day_Trip_-_25?11?18.csv
+
 def create_trips_csv_name(workbook_name: str):
+    """
+    Getting a readable csv file name from the finances spreadsheets
+    Example: 6. Nov Sun Day Trip - 25%2F11%2F18.xlsx
+              -> 6._Nov_Sun_Day_Trip_-_25?11?18.csv
+    :param workbook_name:
+    :return:
+    """
 
     # updating the date values
     workbook_name = workbook_name.replace('%2F', '?')
@@ -66,16 +83,28 @@ def create_trips_csv_name(workbook_name: str):
 
     return workbook_name
 
-# Getting a readable csv file name from the finances spreadsheets
-# Example: EUHWC - Expense Claims (Responses)
-#          EUHWC_-_Expense_Claims_(Responses)
+
 def create_finances_csv_name(workbook_name: str):
+    """
+    Getting a readable csv file name from the finances spreadsheets
+    Example: EUHWC - Expense Claims (Responses)
+            EUHWC_-_Expense_Claims_(Responses)
+    :param workbook_name:
+    :return:
+    """
 
     workbook_name = workbook_name.replace(" ", "_")
     return workbook_name
 
-"""Taking specic csv files and creating table names from them"""
+
 def table_name_creation(spreadsheets_tag: str, csv_name: str, logger_name=""):
+    """
+    Taking specic csv files and creating table names from them
+    :param spreadsheets_tag:
+    :param csv_name:
+    :param logger_name:
+    :return:
+    """
 
     # Set up logging
     global logger
@@ -90,12 +119,17 @@ def table_name_creation(spreadsheets_tag: str, csv_name: str, logger_name=""):
 
     return csv_name
 
-# Getting a readable table name from the trips csv
-# Example: 6._Nov_Sun_Day_Trip_-_25?11?18.csv
-#          -> nov_sun_day_trip
+
 def create_trips_table_name(csv_name: str):
+    """
+    Getting a readable table name from the trips csv
+    Example: 6._Nov_Sun_Day_Trip_-_25?11?18.csv
+                -> nov_sun_day_trip
+    :param csv_name:
+    :return:
+    """
     # Creating a dictionary to store all values
-    trip_info = {}
+    trip_info = dict()
 
     # Doing string manipulation to extract correct values
     trip_info["No"] = int(csv_name.split('.')[0])
@@ -110,10 +144,15 @@ def create_trips_table_name(csv_name: str):
     # returned as lowered to help with databases such as postgres
     return trip_info["Name"].lower()
 
-# Getting a readable table name from the finances csv
-# Example: EUHWC_-_Expense_Claims_(Responses)
-#          expenses
+
 def create_finances_table_name(csv_name: str):
+    """
+    Getting a readable table name from the finances csv
+    Example: EUHWC_-_Expense_Claims_(Responses)
+            expenses
+    :param csv_name:
+    :return:
+    """
 
     # table replacements
     table_name = csv_name.split("_-_")[1]
@@ -124,6 +163,10 @@ def create_finances_table_name(csv_name: str):
     # returned as lowered to help with databases such as postgres
     return table_name.lower()
 
-"""Intention is to create database table with all the trip values"""
+
 def create_trip_table():
+    """
+    Intention is to create database table with all the trip values
+    :return:
+    """
     pass
