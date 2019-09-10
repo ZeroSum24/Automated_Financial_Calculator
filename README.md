@@ -1,4 +1,4 @@
-# HW_Data_Management
+# EUHWC Automated Financial Calculator
 Project to convert spreadsheets into a usable database to run database queries on the values and cut down cross-referencing time.
 
 1. Downloading the spreadsheet files from google drive into a single folder - [InProgress]

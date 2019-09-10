@@ -12,7 +12,7 @@ from src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
 
 # Configuration Parser
 config = configparser.ConfigParser()
-config.read('./config/config.ini')
+config.read('../config/config.ini')
 default_config = config['DEFAULT']
 
 # Path Directories
