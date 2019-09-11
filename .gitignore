@@ -1,8 +1,7 @@
 # Project Specific
-input/*
-output/*
+data/
 *.db
-config/google_drive
+config/google_drive_config
 *.sh
 .idea
 

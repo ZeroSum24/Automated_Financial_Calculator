@@ -13,10 +13,10 @@ from sys import exit
 import sqlalchemy as db
 from sqlalchemy_utils import database_exists, create_database
 
-from src.utils.databasetype import DatabaseType
-from src.database.db_organisation import drop_parent_table_if_existing, create_parent_table
-from src.utils.misc_methods import set_up_logging
-from src.utils.proj_spec_conversion import table_name_creation
+from app.app_src.utils.databasetype import DatabaseType
+from app.app_src.database.db_organisation import drop_parent_table_if_existing, create_parent_table
+from app.app_src.utils.misc_methods import set_up_logging
+from app.app_src.utils.proj_spec_conversion import table_name_creation
 
 logger = logging.getLogger()
 

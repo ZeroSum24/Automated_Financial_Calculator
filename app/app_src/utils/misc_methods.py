@@ -1,7 +1,8 @@
-from os import mkdir, remove
-from os.path import basename, exists, splitext
 import inspect
 import logging
+from os import mkdir, remove
+from os.path import basename, exists, splitext
+
 
 logger = logging.getLogger()
 

@@ -1,7 +1,7 @@
 
 import logging
 
-from src.utils.misc_methods import set_up_logging
+from app.app_src.utils.misc_methods import set_up_logging
 
 logger = logging.getLogger()
 

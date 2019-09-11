@@ -2,13 +2,13 @@
 
 import configparser
 
-from src.database.convert_to_db import convert_to_db
-from src.file_conversions.csv_to_xlsx import convert_all_csv_to_excel
-from src.utils.databasetype import DatabaseType
-from src.utils.misc_methods import create_directories, init_logger
-from src.utils.proj_spec_conversion import path_directories
-from src.database.run_sql import run_all_sql
-from src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
+from app.app_src.database.convert_to_db import convert_to_db
+from app.app_src.file_conversions.csv_to_xlsx import convert_all_csv_to_excel
+from app.app_src.utils.databasetype import DatabaseType
+from app.app_src.utils.misc_methods import create_directories, init_logger
+from app.app_src.utils.proj_spec_conversion import path_directories
+from app.app_src.database.run_sql import run_all_sql
+from app.app_src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
 
 # Configuration Parser
 config = configparser.ConfigParser()

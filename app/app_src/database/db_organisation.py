@@ -2,7 +2,7 @@ import logging
 import sqlalchemy as db
 from sys import exit
 
-from src.utils.misc_methods import dict_to_string, set_up_logging
+from app.app_src.utils.misc_methods import dict_to_string, set_up_logging
 
 logger = logging.getLogger()
 

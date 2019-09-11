@@ -8,8 +8,8 @@ from os.path import splitext
 import pandas as pd
 import xlrd
 
-from src.utils.misc_methods import set_up_logging
-from src.utils.proj_spec_conversion import csv_name_creation
+from app.app_src.utils.misc_methods import set_up_logging
+from app.app_src.utils.proj_spec_conversion import csv_name_creation
 
 logger = logging.getLogger()
 

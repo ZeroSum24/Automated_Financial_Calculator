@@ -4,8 +4,8 @@ from os.path import abspath, basename, join, splitext
 from re import match
 import sqlalchemy as db
 
-from src.database.convert_to_db import init_db_connection
-from src.utils.misc_methods import merge_files, set_up_logging
+from app.app_src.database.convert_to_db import init_db_connection
+from app.app_src.utils.misc_methods import merge_files, set_up_logging
 
 logger = logging.getLogger()
 
