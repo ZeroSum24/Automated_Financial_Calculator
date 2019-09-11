@@ -1,0 +1,19 @@
+
+-- expenses due
+SELECT email_address as email, CAST(SUM(total_amount_claimed_£) as decimal(10,2)) AS owed
+FROM expenses
+-- WHERE paid IS null
+GROUP BY email;
+
+-- expenses list with names
+with expenses_list as
+  (SELECT email_address as email, CAST(SUM(total_amount_claimed_£) as decimal(10,2)) AS owed
+   FROM expenses
+   -- WHERE paid IS null
+   GROUP BY email)
+select names.name, expenses_list.email, expenses_list.owed
+from expenses_list
+  left join (SELECT DISTINCT(email_address) as email, Min(name) as name
+             from expenses
+             group by email) names
+    on expenses_list.email = names.email ;
