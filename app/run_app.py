@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import configparser
+from os.path import abspath
 
 from app.app_src.database.convert_to_db import convert_to_db
 from app.app_src.file_conversions.csv_to_xlsx import convert_all_csv_to_excel
@@ -10,9 +11,10 @@ from app.app_src.utils.proj_spec_conversion import path_directories
 from app.app_src.database.run_sql import run_all_sql
 from app.app_src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
 
+
 # Configuration Parser
 config = configparser.ConfigParser()
-config.read('../config/config.ini')
+config.read(abspath('../config/config.ini'))
 default_config = config['DEFAULT']
 database_config = config['DATABASE']
 

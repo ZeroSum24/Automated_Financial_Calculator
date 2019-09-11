@@ -76,12 +76,14 @@ secondary git repository (can be created inside `data/output`) to backup the out
 ### Dependencies
 
 * Postgres Database
+* Python3
 * PyPI modules (listed in requirements.txt)
 
 To install a Postgres database please follow the installation instructions listed given [here](https://www.postgresql.org/docs/9.3/tutorial-install.html). 
 
 The PyPI modules can be installed using pip by `pip3 install -r requirements.txt`. The use of a virtual environment for
-managing the project's dependencies is recommended.
+managing the project's dependencies is recommended. To help with the project pathing, the project can be installed as a PyPI package too: run `pip3 install .`
+in the root directory of the project.
 
 ## Future work
 
