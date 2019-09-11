@@ -21,7 +21,7 @@ financial information:
 
 The app lists this information in a single outputted spreadsheet along with all the necessary contact and payment information needed to process the financials for the club.
 
-##Project Structure 
+## Project Structure 
 
 
 ````
@@ -71,7 +71,7 @@ secondary git repository (can be created inside `data/output`) to backup the out
 * `scripts/update_documentation.sh` - triggers the auto-build of the sphinx documentation for the app
 
 
-##Setting up the app
+## Setting up the app
 
 ### Dependencies
 
