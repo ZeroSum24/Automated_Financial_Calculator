@@ -14,6 +14,7 @@ from app.app_src.file_conversions.xlsx_to_csv import convert_all_spreadsheets
 config = configparser.ConfigParser()
 config.read('../config/config.ini')
 default_config = config['DEFAULT']
+database_config = config['DATABASE']
 
 # Path Directories
 path_directories = path_directories(config['EUHWC'])
@@ -42,9 +43,9 @@ if __name__ == "__main__":
 
     # Converting all those files into an sqlite database
     db_engine_url = convert_to_db(path_directories=path_directories,
-                                  logger_name=default_config['logger_name'],
-                                  db_file=default_config['db_file_location'],
-                                  db_type=DatabaseType[default_config['DatabaseType']])
+                                  database_config=database_config,
+                                  db_type=DatabaseType[database_config['DatabaseType']],
+                                  logger_name=default_config['logger_name'])
 
     # Automatically running all needed database queries
     run_all_sql(main_sql_folder=default_config['sql_folder'],
@@ -56,6 +57,6 @@ if __name__ == "__main__":
     convert_all_csv_to_excel(source_folder=output_folders[1],
                              output_folder=output_folders[2],
                              workbook_name=default_config['output_workbook_name'],
-                             logger_name=DatabaseType[default_config['DatabaseType']])
+                             logger_name=default_config['logger_name'])
 
     print("Financial Calculations Completed")
