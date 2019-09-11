@@ -2,7 +2,7 @@
 
 A project to convert spreadsheets into a usable database to run database queries on the values and cut down cross-referencing time.
 
-##Project Motivation
+## Project Motivation
 
 The idea behind the project is to automate the financial accounts of a university hillwalking club.
 In moving our finances online, there was a large amount of cross-referencing various forms to check for payment
