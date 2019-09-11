@@ -22,17 +22,17 @@ logger = logging.getLogger()
 
 
 def convert_to_db(path_directories: dict,
-                  logger_name: str = "",
+                  database_config: dict,
                   db_type: DatabaseType = DatabaseType.POSTGRES_DB,
-                  db_file: str = "",
-                  file_extension: str = ".csv"):
+                  file_extension: str = ".csv",
+                  logger_name: str = ""):
     """
     Converting all the csv files to the database and creating a parent table for them if desired
 
     :param path_directories:
     :param logger_name:
+    :param database_config:
     :param db_type:
-    :param db_file:
     :param file_extension:
     :return:
     """
@@ -40,7 +40,7 @@ def convert_to_db(path_directories: dict,
     global logger
     logger = set_up_logging(logger_name)
 
-    db_engine_url = form_db_engine(db_file, db_type)
+    db_engine_url = form_db_engine(database_config, db_type)
 
     # for each path_tuple convert the csv to the database
     for spreadsheet_type in path_directories:
@@ -121,11 +121,11 @@ def csv_to_table(db_engine_url: str, csv_path: str, table_name: str):
     csv_pd.to_sql(name=table_name, con=connection, if_exists='replace')
 
 
-def form_db_engine(db_file: str, db_type: DatabaseType):
+def form_db_engine(db_config: dict, db_type: DatabaseType):
     """
     Forming the appropriate engine string depending on the desired database type
 
-    :param db_file:
+    :param db_config:
     :param db_type:
     :return:
     """
@@ -134,10 +134,10 @@ def form_db_engine(db_file: str, db_type: DatabaseType):
 
     # Makes the appropriate function call depending on the given desired database value
     if db_type == db_type.SQLITE_DB:
-        engine_url = 'sqlite:///{0}'.format(db_file)
+        engine_url = 'sqlite:///{0}'.format(db_config['database_file_location'])
     elif db_type == db_type.POSTGRES_DB:
-        db_name = splitext(basename(db_file))[0]
-        engine_url = 'postgresql://postgres:postgres@localhost/{0}'.format(db_name)
+        engine_url = 'postgresql://{0}:{1}@{2}/{3}'.format(db_config['username'], db_config['password'],
+                                                           db_config['host'], db_config['database_name'])
 
     # Create a database if it doesn't exist
     if not database_exists(engine_url):
